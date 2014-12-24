@@ -1,0 +1,48 @@
+<fieldset class="settings" ng-controller="PopupSettings">
+    <legend>Popup settings:</legend>
+    <label class="ps-label">Your popups:</label>
+    <select ng-model="selectedPopups"></select><?php /* ng-options="playerOption.name for playerOption in players" ng-change="changePlayerSettings(selectedPlayer.id)"*/ ?>
+    <br>
+    <?php echo Form::label('popupName', 'Start time:', ['class' => 'ps-label']); ?>
+
+    <?php echo Form::text('popupName', '', ['ng-model' => 'popup.name']); ?>
+
+    <br>
+    <label class="ps-label" for="popupType">Type:</label>
+    <select id="popupType">
+        <option value="rect">Rect</option>
+        <option value="other">Under construction</option>
+    </select>
+    <br>
+    <label class="ps-label" for="popupColor">Color:</label>
+    <input id="popupColor" type="color" ng-model="popup.color">
+    <br>
+    <?php echo Form::label('popupHeight', 'Height:', ['class' => 'ps-label']); ?>
+
+    <?php echo Form::text('popupHeight', '', ['ng-model' => 'popup.height']); ?>
+
+    <br>
+    <?php echo Form::label('popupWidth', 'Width:', ['class' => 'ps-label']); ?>
+
+    <?php echo Form::text('popupWidth', '', ['ng-model' => 'popup.width']); ?>
+
+    <br>
+    <?php echo Form::label('popupStartTime', 'Start time:', ['class' => 'ps-label']); ?>
+
+    <?php echo Form::text('popupStartTime', '', ['ng-model' => 'popup.startTime']); ?>
+
+    <br>
+    <?php echo Form::label('popupEndTime', 'End time:', ['class' => 'ps-label']); ?>
+
+    <?php echo Form::text('popupEndTime', '', ['ng-model' => 'popup.endTime']); ?>
+
+    <br>
+    <?php echo Form::label('text', 'Text:', ['class' => 'ps-label']); ?>
+
+    <?php echo Form::text('text', '', ['ng-model' => 'popup.text']); ?>
+
+    <br>
+    <button type="button" ng-click="updatePopup()">{{(selectedPopup) ? 'Update' : 'Save'}}</button>
+    <button type="button" ng-click="addPopup()">Add</button>
+    <button type="button" ng-click="deletePopup()" ng-show="selectedPopup">Delete</button>
+</fieldset>

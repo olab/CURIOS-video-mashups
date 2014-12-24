@@ -1,0 +1,42 @@
+<!doctype html>
+<html ng-app="player">
+    <head>
+        <meta charset="UTF-8">
+        <title>Player</title>
+        <?php echo HTML::style('css/main.css'); ?>
+
+        <?php echo HTML::script('js/angular/angular.min.js'); ?>
+
+        <?php echo HTML::script('js/screen.js'); ?>
+
+    </head>
+    <body ng-controller="Main">
+        <?php echo Form::open(['route' => 'player.saveSettings']); ?>
+
+            <div ng-controller="Screens">
+                <?php echo Form::label('screen-id', 'Your entries:'); ?>
+
+                <select id="screen-id" name="screen-id">
+                    <option ng-repeat="screen in screens" value="{{ screen.id }}">{{ screen.name }}</option>
+                </select>
+            </div>
+
+            <svg height="200px" width="200px" id="screen"></svg>
+
+            <div ng-controller="Settings">
+                <?php echo Form::label('height', 'Height:'); ?>
+
+                <?php echo Form::text('height'); ?>
+
+                <?php echo Form::label('width', 'Width:'); ?>
+
+                <?php echo Form::text('width'); ?>
+
+            </div>
+
+            <?php echo Form::submit('Save'); ?>
+
+        <?php echo Form::close(); ?>
+
+    </body>
+</html>

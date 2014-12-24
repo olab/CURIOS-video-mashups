@@ -1,0 +1,100 @@
+<!doctype html>
+<html ng-app="player">
+    <head>
+        <meta charset="UTF-8">
+        <title>Player</title>
+        <?php echo HTML::style('css/main.css'); ?>
+
+        <?php echo HTML::script('js/angular/angular.min.js'); ?>
+
+        <?php echo HTML::script('js/screen.js'); ?>
+
+    </head>
+    <body ng-controller="Main">
+        <?php echo Form::open(['route' => 'player.saveSettings']); ?>
+
+            <div ng-controller="Screens">
+                <?php echo Form::label('screen-id', 'Your entries:'); ?>
+
+                <select id="screen-id" name="screen-id">
+                    <option ng-repeat="screen in screens" value="{{ screen.id }}">{{ screen.name }}</option>
+                </select>
+            </div>
+
+            <svg height="200px" width="200px" id="screen"></svg>
+
+            <?php echo $__env->make('settings.player', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+            <fieldset class="settings" ng-controller="Settings">
+                <legend>Player settings:</legend>
+                <?php echo Form::label('height', 'Height:', ['class' => 'ps-label']); ?>
+
+                <?php echo Form::text('height'); ?>
+
+                <br>
+                <?php echo Form::label('width', 'Width:', ['class' => 'ps-label']); ?>
+
+                <?php echo Form::text('width'); ?>
+
+                <br>
+                <?php echo Form::label('startTime', 'Start time:', ['class' => 'ps-label']); ?>
+
+                <?php echo Form::text('startTime'); ?>
+
+                <br>
+                <?php echo Form::label('endTime', 'End time:', ['class' => 'ps-label']); ?>
+
+                <?php echo Form::text('endTime'); ?>
+
+                <br>
+                <?php echo Form::label('soundLevel', 'Sound level:', ['class' => 'ps-label']); ?>
+
+                <?php echo Form::text('soundLevel'); ?>
+
+                <br>
+                <button type="button" id="submitPlayerSettings">Update</button>
+            </fieldset>
+
+            <fieldset class="settings">
+                <legend>Popup settings:</legend>
+                <label class="ps-label" for="popupType">Type:</label>
+                <select id="popupType">
+                    <option>Circle</option>
+                    <option>Rect</option>
+                </select>
+                <br>
+                <label class="ps-label" for="popupColor">Color:</label>
+                <input id="popupColor" type="color">
+                <br>
+                <label class="ps-label" for="popupStartTime">Start time:</label>
+                <input id="popupStartTime" type="text">
+                <br>
+                <label class="ps-label" for="popupEndTime">End time:</label>
+                <input id="popupEndTime" type="text">
+                <br>
+                <button type="button" id="addPopup">Add</button>
+                <button type="button" id="updatePopup">Update</button>
+            </fieldset>
+
+            <fieldset class="settings">
+                <legend>Audio settings:</legend>
+                <?php echo Form::label('audioFile', 'Audio:', ['class' => 'ps-label']); ?>
+
+                <?php echo Form::file('audioFile'); ?>
+
+                <br>
+                <label class="ps-label" for="audioStartTime">Start time:</label>
+                <input id="audioStartTime" type="text">
+                <br>
+                <label class="ps-label" for="audioEndTime">End time:</label>
+                <input id="audioEndTime" type="text">
+                <br>
+                <button type="button" id="updateAudio">Update</button>
+            </fieldset>
+
+            <?php echo Form::submit('Save'); ?>
+
+        <?php echo Form::close(); ?>
+
+    </body>
+</html>

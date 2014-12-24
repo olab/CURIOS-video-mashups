@@ -1,0 +1,23 @@
+/*
+    ps - player settings
+*/
+#screen{
+    display: block;
+    margin: 0 auto;
+    background: gray;
+}
+.ps-label{
+    display: inline-block;
+    width: 100px;
+}
+.settings{
+    display: inline-block;
+    vertical-align: top;
+    width: 31%;
+}
+.popup{
+    cursor: move;
+}
+#audioPlayer{
+    margin: 10px 0;
+}
