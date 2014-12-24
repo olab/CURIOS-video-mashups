@@ -22,10 +22,6 @@
             ng-mousemove="dragPopup($event)"
             ng-mouseup="deleteDragPopup()"
             ng-mouseleave="deleteDragPopup()">
-                <g>
-                    <rect height="100" width="100"></rect>
-                    <text x="10" y="10" fill="white">Text</text>
-                </g>
             </svg>
 
             @include('player.settings.player')
