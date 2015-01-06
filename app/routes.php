@@ -1,5 +1,5 @@
 <?php
-
+Route::get('player/embed', 'PlayerController@embed');
 Route::get('player/deleteAudioAJAX', 'PlayerController@deleteAudioAJAX')
     ->before('auth');
 Route::get('player/jsonGetAudio', 'PlayerController@jsonGetAudio')

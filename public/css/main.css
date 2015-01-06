@@ -6,6 +6,18 @@
     margin: 0 auto;
     background: gray;
 }
+#youtube{
+    position: relative;
+    width: 600px;
+    margin: 0 auto;
+}
+#youtube iframe{
+    width: inherit;
+    height: inherit;
+}
+#youtube div{
+    cursor: pointer;
+}
 .ps-label{
     display: inline-block;
     width: 100px;

@@ -1,7 +1,5 @@
 (function(){
-    var app = angular.module('player', []);
-
-    app.controller('Main', function($scope, $http){
+    function Main($scope, $http){
         $scope.player = {};
 
         $scope.audio = {
@@ -12,6 +10,7 @@
         };
         $scope.audioNoteObj = document.getElementById('audioNote');
         $scope.audioPlayerObj = document.getElementById('audioPlayer');
+        $scope.watchResultObj = document.getElementById('watchResult');
 
         $scope.players = [{
             id:'new',
@@ -30,9 +29,18 @@
                     id: id
                 }
             }).success(function(data){
+
+                // change url, with which user can see result
+                var href = $scope.watchResultObj.getAttribute('href');
+                var value = href.substring(href.lastIndexOf('slug=') + 5);
+
+                href = href.replace(value, window.btoa(id));
+                $scope.watchResultObj.setAttribute('href', href);
+
                 data = angular.fromJson(data);
                 $scope.initPlayerSettings(id, data);
                 $scope.initAudio(id);
+
             }).error(function(){
                 console.error('fix changePlayerSettings');
             });
@@ -43,6 +51,7 @@
 
             $scope.player.id = id;
             $scope.player.name = isNew ? 'New player' : data.name;
+            $scope.player.code = isNew ? '' : data.code;
             $scope.player.height = isNew ? '200' : data.height;
             $scope.player.width = isNew ? '200' : data.width;
             $scope.player.startTime = isNew ? '0' : data.start_time;
@@ -92,9 +101,9 @@
 
         $scope.initPlayerSettings($scope.selectedPlayer.id);
         $scope.initAudio($scope.selectedPlayer.id);
-    });
+    }
 
-    app.controller('PlayerSettings', function($scope, $http){
+    function PlayerSettings ($scope, $http){
         $scope.updatePlayerSettings = function(){
             var json = angular.toJson($scope.player);
 
@@ -139,9 +148,9 @@
                 });
             });
         };
-    });
+    }
 
-    app.controller('AudioSettings', function($scope, $http){
+    function AudioSettings($scope, $http){
         $scope.audioUpdate = function(){
             var file = document.getElementById('audioFile').files[0],
                 oldFileName = $scope.audioNoteObj.innerHTML;
@@ -185,9 +194,9 @@
                 $scope.resetAudio();
             });
         };
-    });
+    }
 
-    app.controller('Screen', function($scope){
+    function Screen($scope){
         var dragPopup = false,
             mouseTargetX = 0,
             mouseTargetY = 0;
@@ -221,9 +230,36 @@
         $scope.deleteDragPopup = function(){
             dragPopup = false;
         };
-    });
+    }
 
-    app.controller('PopupSettings', function($scope, $http){
+    function VideoScreen($scope, $http){
+        var dragPopup = false,
+            startX = 0,
+            startY = 0;
+
+        $scope.focusIn = function($event){
+            dragPopup = $event.target;
+            startX = $event.screenX - parseInt(dragPopup.style.left);
+            startY = $event.screenY - parseInt(dragPopup.style.top);
+        };
+
+        $scope.focusOut = function(){
+            dragPopup = false;
+        };
+
+        $scope.dragFocusElement = function($event){
+            if(dragPopup){
+                var shiftX = -(startX - $event.screenX),
+                    shiftY = -(startY - $event.screenY);
+
+                dragPopup.style.left = shiftX + 'px';
+                dragPopup.style.top = shiftY + 'px';
+            }
+        };
+
+    }
+
+    function PopupSettings($scope, $http){
         var screen = document.getElementById('screen');
         $scope.popup = {
             id: 'new',
@@ -268,5 +304,13 @@
             //    $scope.popups = data;
             //});
         }
-    });
+    }
+
+    angular.module('player', [])
+        .controller('Main',             Main)
+        .controller('PlayerSettings',   PlayerSettings)
+        .controller('AudioSettings',    AudioSettings)
+        .controller('Screen',           Screen)
+        .controller('VideoScreen',      VideoScreen)
+        .controller('PopupSettings',    PopupSettings);
 })();

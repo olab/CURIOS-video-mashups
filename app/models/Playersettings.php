@@ -7,7 +7,7 @@ class PlayerSettings extends Eloquent {
 
     public $timestamps = false;
 
-    public static function createEntry($name, $width, $height, $startTime, $endTime, $soundLevel)
+    public static function createEntry($name, $width, $height, $startTime, $endTime, $soundLevel, $code)
     {
         $playerId = PlayerSettings::create([
             'name'          => $name,
@@ -16,6 +16,7 @@ class PlayerSettings extends Eloquent {
             'start_time'    => $startTime,
             'end_time'      => $endTime,
             'sound_level'   => $soundLevel,
+            'code'          => $code
         ])->id;
 
         UserPlayer::create([
@@ -25,7 +26,7 @@ class PlayerSettings extends Eloquent {
         return $playerId;
     }
 
-    public static function updateEntry($id, $name, $width, $height, $startTime, $endTime, $soundLevel)
+    public static function updateEntry($id, $name, $width, $height, $startTime, $endTime, $soundLevel, $code)
     {
         PlayerSettings::where('id', '=', $id)->update([
             'name'          => $name,
@@ -34,6 +35,7 @@ class PlayerSettings extends Eloquent {
             'start_time'    => $startTime,
             'end_time'      => $endTime,
             'sound_level'   => $soundLevel,
+            'code'          => $code
         ]);
     }
 }

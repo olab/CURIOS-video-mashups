@@ -7,6 +7,20 @@ class PlayerController extends \BaseController
 		return View::make('player.index');
 	}
 
+    public function embed()
+    {
+        $playerId = base64_decode(Input::get('slug'));
+        $playerObj = PlayerSettings::find($playerId);
+
+        $audioObj = PlayerAudio::getAudioByPlayer($playerId);
+
+        return View::make('embed')
+            ->with(array(
+                'playerObj' => $playerObj,
+                'audioJSON' => json_encode($audioObj)
+            ));
+    }
+
     public function getPlayersJSON()
     {
         $data = DB::table('user_players')
@@ -51,7 +65,8 @@ class PlayerController extends \BaseController
                 $data->height,
                 $data->startTime,
                 $data->endTime,
-                $data->soundLevel
+                $data->soundLevel,
+                $data->code
             );
         } else {
             PlayerSettings::updateEntry(
@@ -61,7 +76,8 @@ class PlayerController extends \BaseController
                 $data->height,
                 $data->startTime,
                 $data->endTime,
-                $data->soundLevel
+                $data->soundLevel,
+                $data->code
             );
         }
         exit(json_encode($data->id));
@@ -81,12 +97,7 @@ class PlayerController extends \BaseController
 
     public function jsonGetAudio()
     {
-        $data = DB::table('player_audio')
-            ->join('audio_settings', 'player_audio.audio_id', '=', 'audio_settings.id')
-            ->select('audio_settings.id', 'audio_settings.src', 'audio_settings.start_time', 'audio_settings.end_time', 'audio_settings.volume')
-            ->where('player_audio.player_id', '=', Input::get('id'))
-            ->get();
-        $data = isset($data[0]) ? $data[0] : false;
+        $data = PlayerAudio::getAudioByPlayer(Input::get('id'));
         exit(json_encode($data));
     }
 

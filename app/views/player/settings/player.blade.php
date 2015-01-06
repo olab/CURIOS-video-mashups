@@ -3,6 +3,9 @@
     {{Form::label('playerName', 'Name:', ['class' => 'ps-label'])}}
     {{Form::text('playerName', '', ['ng-model' => 'player.name'])}}
     <br>
+    {{Form::label('youTubeCode', 'YouTube code:', ['class' => 'ps-label'])}}
+    {{Form::text('youTubeCode', '', ['ng-model' => 'player.code'])}}
+    <br>
     {{Form::label('height', 'Height:', ['class' => 'ps-label'])}}
     {{Form::text('height', '', ['ng-model' => 'player.height'])}}
     <br>
