@@ -1,9 +1,9 @@
 <div ng-controller="SecondStep" ng-show="stepNum > 1" class="step">
-    <label for="videoStart" class="label-column">Video starts</label>
-    <input id="videoStart" type="text" ng-model="player.start">
+    <label class="label-column">Video starts</label>
+    @include('snippet.templates.selectTime')
     <br>
-    <label for="videoEnd" class="label-column">Video ends</label>
-    <input id="videoEnd" type="text" ng-model="player.end">
+    <label class="label-column">Video ends</label>
+    @include('snippet.templates.selectTime')
     <br>
     <label for="videoVolume" class="label-column">Video volume</label>
     <input id="videoVolume" type="text" ng-model="player.volume">

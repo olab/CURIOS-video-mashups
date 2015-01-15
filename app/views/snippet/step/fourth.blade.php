@@ -15,11 +15,20 @@
         <label class="label-column">Width</label>
         <input type="text" ng-model="annotation.width">
         <br>
+        <label class="label-column">X coordinate</label>
+        <input type="text" ng-model="annotation.x">
+        <br>
+        <label class="label-column">y coordinate</label>
+        <input type="text" ng-model="annotation.y">
+        <br>
+        <label class="label-column">Font size</label>
+        <input type="text" ng-model="annotation.fontSize">
+        <br>
         <label class="label-column">Annotation starts</label>
-        <input type="text" ng-model="annotation.start">
+        @include('snippet.templates.selectTime')
         <br>
         <label class="label-column">Annotation ends</label>
-        <input type="text" ng-model="annotation.end">
+        @include('snippet.templates.selectTime')
         <br>
         <label class="label-column">Annotation text</label>
         <input type="text" ng-model="annotation.text">

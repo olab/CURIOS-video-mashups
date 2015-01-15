@@ -13,11 +13,11 @@
         <input type="file">
         <br>
         <br>
-        <label for="audioStart" class="label-column">Audio starts</label>
-        <input id="audioStart" type="text" ng-model="audio.start">
+        <label class="label-column">Audio starts</label>
+        @include('snippet.templates.selectTime')
         <br>
-        <label for="audioEnd" class="label-column">Audio ends</label>
-        <input id="audioEnd" type="text" ng-model="audio.end">
+        <label class="label-column">Audio ends</label>
+        @include('snippet.templates.selectTime')
         <br>
         <label for="audioVolume" class="label-column">Audio volume</label>
         <input id="audioVolume" type="text" ng-model="audio.volume">

@@ -9,14 +9,16 @@
     function Main($scope){
         $scope.stepNum = 1;
         $scope.player = {
-            originalUrl: 'https://www.youtube.com/watch?v=2qUrIq97Ecs',
+            originalUrl: 'https://www.youtube.com/watch?v=iS0wuN_6wyw',
             videoCode: '',
             start: 0,
             volume: 100
         };
         $scope.annotation = {
             form: 'rectangle',
-            backGround: 'black',
+            backGround: 'gray',
+            x: 0,
+            y: 0,
             height: 100,
             width: 100,
             start: 0,
@@ -68,8 +70,8 @@
 
             newAnnotation.className = 'annotation';
             newAnnotation.style.position = 'absolute';
-            newAnnotation.style.top = '0';
-            newAnnotation.style.left = '0';
+            newAnnotation.style.top = $mainScope.annotation.x + 'px';
+            newAnnotation.style.left = $mainScope.annotation.y + 'px';
             newAnnotation.style.width = $mainScope.annotation.width + 'px';
             newAnnotation.style.height = $mainScope.annotation.height + 'px';
             newAnnotation.style.background = $mainScope.annotation.backGround;
@@ -138,8 +140,12 @@
                 var shiftX = -(startX - $event.screenX),
                     shiftY = -(startY - $event.screenY);
 
-                focusedPopup.style.left = shiftX + 'px';
-                focusedPopup.style.top = shiftY + 'px';
+                if (0 < shiftX && shiftX < (640 - focusedPopup.offsetWidth)) {
+                    focusedPopup.style.left = shiftX + 'px';
+                }
+                if (0 < shiftY && shiftY < (480 - focusedPopup.offsetHeight)) {
+                    focusedPopup.style.top = shiftY + 'px';
+                }
             }
         };
     }

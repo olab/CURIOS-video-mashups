@@ -1,0 +1,15 @@
+H
+<select>
+    <option>0</option>
+    <option>1</option>
+</select>
+M
+<select>
+    <option>0</option>
+    <option>1</option>
+</select>
+S
+<select>
+    <option>0</option>
+    <option>1</option>
+</select>

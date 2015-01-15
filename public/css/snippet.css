@@ -1,6 +1,5 @@
 .settings-bl,
 .result-bl {
-    position: relative;
     display: inline-block;
     width: calc(50% - 2px);
     vertical-align: top;
@@ -8,6 +7,7 @@
 
 #editableScreen,
 #resultScreen{
+    position: relative;
     display: block;
     width: 640px;
     margin: 0 auto;
