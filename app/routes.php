@@ -21,6 +21,9 @@ Route::post('player/saveSettings', ['as' => 'player.saveSettings', 'uses' => 'Pl
 Route::get('player/settings', 'PlayerController@settings')
     ->before('auth');
 
+Route::get('player/snippet', 'SnippetController@create')
+    ->before('auth');
+
 Route::get('login', 'SessionController@create');
 Route::get('logout', 'SessionController@destroy');
 Route::resource('session', 'SessionController');

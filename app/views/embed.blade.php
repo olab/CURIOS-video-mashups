@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Player</title>
+        {{HTML::style('css/embed.css')}}
     </head>
     <body>
         <div id="player"></div>
