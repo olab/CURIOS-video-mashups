@@ -7,29 +7,90 @@
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     function Main($scope){
+        $scope.screenWidth = 480;
+        $scope.screenHeight = 360;
         $scope.stepNum = 1;
+        $scope.annotationForDelete = false;
         $scope.player = {
             originalUrl: 'https://www.youtube.com/watch?v=iS0wuN_6wyw',
             videoCode: '',
-            start: 0,
+            start: {h: 0, m: 0, s: 0},
+            end: {h: 0, m: 0, s: 0},
             volume: 100
         };
-        $scope.annotation = {
-            form: 'rectangle',
-            backGround: 'gray',
-            x: 0,
-            y: 0,
-            height: 100,
-            width: 100,
-            start: 0,
-            text: ''
-        };
+        $scope.annotation = getDefaultAnnotation();
         $scope.audio = {
             exist: '',
-            start: 0,
-            volume: 100
+            start: {h: 0, m: 0, s: 0},
+            end: {h: 0, m: 0, s: 0},
+            volume: 100,
+            note: '',
+            uploaded: 0
         };
         $scope.playerApi = {};
+        $scope.videoTime = {
+            hours: [],
+            minutes: [],
+            seconds: []
+        };
+        $scope.audioTime = {
+            hours: [],
+            minutes: [],
+            seconds: []
+        };
+
+        $scope.setVideoTimeRange = function(){
+            $scope.$apply(function() {
+                var seconds = $scope.playerApi.getDuration() - 1,// minus 0 sec
+                    minutes = seconds / 60,
+                    hours = minutes / 60;
+
+                $scope.player.end.h = Math.floor(hours);
+                $scope.player.end.m = Math.floor(minutes) % 60;
+                $scope.player.end.s = Math.floor(seconds) % 60;
+
+                seconds = (seconds < 60) ? seconds : 60;
+                minutes = (minutes < 60) ? minutes : 60;
+
+                for (var h = 0; h < hours; h++) {
+                    $scope.videoTime.hours.push(h);
+                }
+
+                for (var m = 0; m < minutes; m++) {
+                    $scope.videoTime.minutes.push(m);
+                }
+                for (var s = 0; s < seconds; s++) {
+                    $scope.videoTime.seconds.push(s);
+                }
+            });
+        };
+
+        $scope.setAudioRange = function(){
+            $scope.$apply(function() {
+                var audio = document.getElementById('audioFileUploaded'),
+                    seconds = audio.duration,
+                    minutes = seconds / 60,
+                    hours = minutes / 60;
+
+                $scope.audio.end.h = Math.floor(hours);
+                $scope.audio.end.m = Math.floor(minutes) % 60;
+                $scope.audio.end.s = Math.floor(seconds) % 60;
+
+                seconds = (seconds < 60) ? seconds : 60;
+                minutes = (minutes < 60) ? minutes : 60;
+
+                for (var h = 0; h < hours; h++) {
+                    $scope.audioTime.hours.push(h);
+                }
+
+                for (var m = 0; m < minutes; m++) {
+                    $scope.audioTime.minutes.push(m);
+                }
+                for (var s = 0; s < seconds; s++) {
+                    $scope.audioTime.seconds.push(s);
+                }
+            });
+        }
     }
 
     function FirstStep($scope){
@@ -38,27 +99,68 @@
 
             $mainScope.stepNum = 2;
             $mainScope.player.videoCode = getVideoCode($mainScope.player.originalUrl);
-            $mainScope.playerApi = createPlayer($mainScope.player);
+            $mainScope.playerApi = createPlayer($scope);
         }
     }
 
     function SecondStep($scope, $http){
+        var $mainScope = $scope.$parent;
         $scope.toThirdStep = function(){
-            var $mainScope = $scope.$parent;
-
             $mainScope.stepNum = 3;
+        };
+
+        $scope.updateVideo = function(){
+            var time = $mainScope.player.start,
+                startTime = ((time.h * 60) + time.m) * 60 + time.s;
+            $mainScope.playerApi.seekTo(startTime);
         }
     }
 
     function ThirdStep($scope, $http){
-        $scope.toFourthStep = function(){
-            var $mainScope = $scope.$parent;
+        var $mainScope = $scope.$parent;
 
+        $scope.toFourthStep = function(){
             $mainScope.stepNum = 4;
 
             if ($mainScope.audio.exist == 'no') {
                 console.log('reset audio form, when click no');
             }
+        };
+
+        $scope.uploadAudio = function(){
+            var file = document.getElementById('audioFile').files[0];
+
+            if ((typeof file == "undefined") && ($scope.audio.note == '')) {
+                $scope.audio.note = 'Please, choose file for upload';
+            } else {
+                $scope.audio.note = 'Upload...';
+                $scope.audio.uploaded = 1;
+
+                var data = new FormData();
+                data.append('file', file);
+
+                var request = new XMLHttpRequest();
+                request.open('POST', 'ajaxUploadAudio');
+                request.send(data);
+
+                request.onload = function () {
+                    data = angular.fromJson(request.response);
+                    $mainScope.audio.note = file.name;
+
+                    var srcToMp3 = document.getElementById('srcToMp3');
+                    srcToMp3.src = data.src;
+                    srcToMp3.parentNode.load();
+
+                    srcToMp3.parentNode.onloadeddata = function(){
+                        $scope.setAudioRange();
+                    };
+                };
+            }
+        };
+
+        $scope.updateAudio = function(){
+            $mainScope.playerApi.setVolume($mainScope.player.volume);
+
         }
     }
 
@@ -70,18 +172,47 @@
 
             newAnnotation.className = 'annotation';
             newAnnotation.style.position = 'absolute';
-            newAnnotation.style.top = $mainScope.annotation.x + 'px';
-            newAnnotation.style.left = $mainScope.annotation.y + 'px';
+            newAnnotation.style.top = $mainScope.annotation.y + 'px';
+            newAnnotation.style.left = $mainScope.annotation.x + 'px';
             newAnnotation.style.width = $mainScope.annotation.width + 'px';
             newAnnotation.style.height = $mainScope.annotation.height + 'px';
             newAnnotation.style.background = $mainScope.annotation.backGround;
-            newAnnotation.style.color = 'white';
+            newAnnotation.style.color = $mainScope.annotation.color;
+            newAnnotation.style.fontSize = $mainScope.annotation.fontSize;
+            newAnnotation.style.opacity = 1 - $mainScope.annotation.transparency;
             newAnnotation.innerHTML = $mainScope.annotation.text;
+
             if ($mainScope.annotation.form == 'ellipse') {
                 newAnnotation.style.borderRadius = '100%';
             }
 
             editableScreen.appendChild(newAnnotation);
+        };
+
+        $scope.updateAnnotation = function(){
+            $mainScope.annotationForDelete.style.top = $mainScope.annotation.y + 'px';
+            $mainScope.annotationForDelete.style.left = $mainScope.annotation.x + 'px';
+            $mainScope.annotationForDelete.style.width = $mainScope.annotation.width + 'px';
+            $mainScope.annotationForDelete.style.height = $mainScope.annotation.height + 'px';
+            $mainScope.annotationForDelete.style.background = $mainScope.annotation.backGround;
+            $mainScope.annotationForDelete.style.color = $mainScope.annotation.color;
+            $mainScope.annotationForDelete.style.fontSize = $mainScope.annotation.fontSize;
+            $mainScope.annotationForDelete.style.opacity = 1 - $mainScope.annotation.transparency;
+            $mainScope.annotationForDelete.innerHTML = $mainScope.annotation.text;
+
+            if ($mainScope.annotationForDelete.form == 'ellipse') {
+                $mainScope.annotationForDelete.style.borderRadius = '100%';
+            }
+        };
+
+        $scope.resetAnnotationForm = function(){
+            $mainScope.annotationForDelete = false;
+            $mainScope.annotation = getDefaultAnnotation();
+        };
+
+        $scope.deleteAnnotation = function(){
+            $mainScope.annotationForDelete.remove();
+            $mainScope.annotationForDelete = false;
         };
 
         $scope.toFifthStep = function(){
@@ -91,7 +222,6 @@
 
     function FifthStep($scope, $http){
         $scope.outputResult = function(){
-            console.log(1);
             var resultScreen = document.getElementById('resultScreen');
             var embed = document.createElement('embed');
 
@@ -99,6 +229,23 @@
             embed.width = '660px';
             embed.height = '485px';
             resultScreen.appendChild(embed);
+        }
+    }
+
+    function getDefaultAnnotation(){
+        return {
+            form: 'rectangle',
+            backGround: 'gray',
+            x: 0,
+            y: 0,
+            height: 100,
+            width: 100,
+            start: {h: 0, m: 0, s: 0},
+            end: {h: 0, m: 0, s: 0},
+            text: '',
+            transparency: 0,
+            fontSize: 12,
+            color: 'black'
         }
     }
 
@@ -111,22 +258,39 @@
         return videoCode;
     }
 
-    function createPlayer(obj){
+    function createPlayer($scope){
         // This function creates an <iframe> (and YouTube player) after the API code downloads.
         return new YT.Player('player', {
-            height: '480',
-            width: '640',
-            videoId: obj.videoCode
+            height: $scope.screenHeight,
+            width: $scope.screenWidth,
+            videoId: $scope.player.videoCode,
+            events: {
+                onReady: $scope.setVideoTimeRange
+            }
         });
     }
 
     function Screen($scope){
-        var focusedPopup = false,
+        var $mainScope = $scope.$parent,
+            focusedPopup = false,
             startX = 0,
             startY = 0;
 
         $scope.focus = function($event){
             focusedPopup = $event.target;
+            $mainScope.annotationForDelete = focusedPopup;
+
+            $mainScope.annotation.x = parseInt(focusedPopup.style.left);
+            $mainScope.annotation.y = parseInt(focusedPopup.style.top);
+            $mainScope.annotation.width = parseInt(focusedPopup.style.width);
+            $mainScope.annotation.height = parseInt(focusedPopup.style.height);
+            $mainScope.annotation.backGround = focusedPopup.style.background;
+            $mainScope.annotation.color = focusedPopup.style.color;
+            $mainScope.annotation.fontSize = focusedPopup.style.fontSize;
+            $mainScope.annotation.transparency = 1 - focusedPopup.style.opacity;
+            $mainScope.annotation.text = focusedPopup.innerHTML;
+            $mainScope.annotation.form = (focusedPopup.style.borderRadius) ? 'ellipse' : 'rectangle';
+
             startX = $event.screenX - parseInt(focusedPopup.style.left);
             startY = $event.screenY - parseInt(focusedPopup.style.top);
         };
@@ -140,10 +304,13 @@
                 var shiftX = -(startX - $event.screenX),
                     shiftY = -(startY - $event.screenY);
 
-                if (0 < shiftX && shiftX < (640 - focusedPopup.offsetWidth)) {
+                $mainScope.annotation.x = shiftX;
+                $mainScope.annotation.y = shiftY;
+
+                if (0 < shiftX && shiftX < ($mainScope.screenWidth - focusedPopup.offsetWidth)) {
                     focusedPopup.style.left = shiftX + 'px';
                 }
-                if (0 < shiftY && shiftY < (480 - focusedPopup.offsetHeight)) {
+                if (0 < shiftY && shiftY < ($mainScope.screenHeight - focusedPopup.offsetHeight)) {
                     focusedPopup.style.top = shiftY + 'px';
                 }
             }

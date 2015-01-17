@@ -1,15 +1,6 @@
 H
-<select>
-    <option>0</option>
-    <option>1</option>
-</select>
+<select ng-model="{{$model}}.h" ng-options="v for v in {{$options}}.hours"></select>
 M
-<select>
-    <option>0</option>
-    <option>1</option>
-</select>
+<select ng-model="{{$model}}.m" ng-options="v for v in {{$options}}.minutes"></select>
 S
-<select>
-    <option>0</option>
-    <option>1</option>
-</select>
+<select ng-model="{{$model}}.s" ng-options="v for v in {{$options}}.seconds"></select>

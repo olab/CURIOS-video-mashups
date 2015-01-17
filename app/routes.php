@@ -23,6 +23,8 @@ Route::get('player/settings', 'PlayerController@settings')
 
 Route::get('player/snippet', 'SnippetController@create')
     ->before('auth');
+Route::post('player/ajaxUploadAudio', 'SnippetController@ajaxUploadAudio')
+    ->before('auth');
 
 Route::get('login', 'SessionController@create');
 Route::get('logout', 'SessionController@destroy');

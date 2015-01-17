@@ -1,11 +1,10 @@
 <div ng-controller="SecondStep" ng-show="stepNum > 1" class="step">
     <label class="label-column">Video starts</label>
-    @include('snippet.templates.selectTime')
+    @include('snippet.templates.selectTime', array('model' => 'player.start', 'options' => 'videoTime'))
     <br>
     <label class="label-column">Video ends</label>
-    @include('snippet.templates.selectTime')
+    @include('snippet.templates.selectTime', array('model' => 'player.end', 'options' => 'videoTime'))
     <br>
-    <label for="videoVolume" class="label-column">Video volume</label>
-    <input id="videoVolume" type="text" ng-model="player.volume">
+    <button ng-click="updateVideo()">Update</button>
     <button ng-click="toThirdStep()" class="next-step" ng-show="stepNum < 3">Next</button>
 </div>

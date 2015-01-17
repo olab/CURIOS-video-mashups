@@ -9,7 +9,7 @@
 #resultScreen{
     position: relative;
     display: block;
-    width: 640px;
+    width: 480px;
     margin: 0 auto;
 }
 
@@ -23,11 +23,21 @@
 }
 .label-column{
     display: inline-block;
-    width: 120px;
+    width: 170px;
 }
 .next-step{
     float: right;
 }
 .annotation{
     text-align: center;
+}
+.tooltip {
+    position: relative;
+    top: -5px;
+    left: 3px;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    font-size: 10px;
+    background: yellow;
+    padding: 0 3px;
 }

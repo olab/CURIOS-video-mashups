@@ -6,21 +6,29 @@
     <input id="noAudio" type="radio" name="audio" ng-model="audio.exist" value="no" ng-change="toFourthStep()">
 
     <div ng-show="audio.exist">
-        <audio controls>
-          <source src="{{ URL::asset('audio/Carly Comando - Everyday.mp3')}}" type="audio/mpeg">
+        <audio ng-show="audio.uploaded" id="audioFileUploaded" controls>
+          <source id="srcToMp3" src="{{ URL::asset('audio/Carly Comando - Everyday.mp3')}}" type="audio/mpeg">
         </audio>
         <br>
-        <input type="file">
+        <input type="file" id="audioFile">
+        <span ng-model="audio.note">@{{ audio.note }}</span>
         <br>
-        <br>
-        <label class="label-column">Audio starts</label>
-        @include('snippet.templates.selectTime')
-        <br>
-        <label class="label-column">Audio ends</label>
-        @include('snippet.templates.selectTime')
-        <br>
-        <label for="audioVolume" class="label-column">Audio volume</label>
-        <input id="audioVolume" type="text" ng-model="audio.volume">
+        <div ng-show="audio.uploaded">
+            <label class="label-column">Audio starts<span class="tooltip" title="Time added to video starts">?</span></label>
+            @include('snippet.templates.selectTime', array('model' => 'audio.start', 'options' => 'audioTime'))
+            <br>
+            <label class="label-column">Audio ends</label>
+            @include('snippet.templates.selectTime', array('model' => 'audio.end', 'options' => 'audioTime'))
+            <br>
+            <label for="audioVolume" class="label-column">Audio volume</label>
+            <input id="audioVolume" type="text" ng-model="audio.volume">
+            <br>
+            <label for="videoVolume" class="label-column">Video volume</label>
+            <input id="videoVolume" type="text" ng-model="player.volume">
+            <br>
+        </div>
+        <button ng-click="uploadAudio()">Upload File</button>
+        <button ng-click="updateAudio()" ng-show="audio.uploaded">Update</button>
         <button ng-click="toFourthStep()" class="next-step" ng-show="stepNum < 4">Next</button>
     </div>
 </div>
