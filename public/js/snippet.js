@@ -237,7 +237,7 @@
             var resultScreen = document.getElementById('resultScreen');
             var embed = document.createElement('embed');
 
-            embed.src = baseUrl + '/embed?slug=' + $mainScope.player.idBase64;
+            embed.src = baseUrl + '/player/embed?slug=' + $mainScope.player.idBase64;
             embed.width = '480px';
             embed.height = '365px';
             resultScreen.appendChild(embed);
@@ -257,7 +257,7 @@
                 $mainScope.player.id = parseInt(data.id);
                 $mainScope.player.idBase64 = data.idBase64;
                 document.getElementById('resultCode').innerHTML =
-                    '<embed src=' + baseUrl + '"/embed?slug=' + data.idBase64 + '" width="480px" height="360px"></embed>';
+                    '<embed src="' + baseUrl + '/player/embed?slug=' + data.idBase64 + '" width="480px" height="360px"></embed>';
             }).error(function(e){
                 console.error(e.error.message);
             });
