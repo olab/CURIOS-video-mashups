@@ -27,5 +27,8 @@
             </div>
             <div id="resultScreen"></div>
         </div>
+        <script>
+            var baseUrl = '{{URL::to('/')}}';
+        </script>
     </body>
 </html>
