@@ -1,5 +1,4 @@
 <?php
-Route::get('player/embed', 'PlayerController@embed');
 Route::get('player/deleteAudioAJAX', 'PlayerController@deleteAudioAJAX')
     ->before('auth');
 Route::get('player/jsonGetAudio', 'PlayerController@jsonGetAudio')
@@ -25,6 +24,9 @@ Route::get('player/snippet', 'SnippetController@create')
     ->before('auth');
 Route::post('player/ajaxUploadAudio', 'SnippetController@ajaxUploadAudio')
     ->before('auth');
+Route::post('player/generate', 'SnippetController@generate')
+    ->before('auth');
+Route::get('player/embed', 'SnippetController@embed');
 
 Route::get('login', 'SessionController@create');
 Route::get('logout', 'SessionController@destroy');

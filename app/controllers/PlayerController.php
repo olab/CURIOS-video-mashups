@@ -7,20 +7,6 @@ class PlayerController extends \BaseController
 		return View::make('player.index');
 	}
 
-    public function embed()
-    {
-        $playerId = base64_decode(Input::get('slug'));
-        $playerObj = PlayerSettings::find($playerId);
-
-        $audioObj = PlayerAudio::getAudioByPlayer($playerId);
-
-        return View::make('embed')
-            ->with(array(
-                'playerObj' => $playerObj,
-                'audioJSON' => json_encode($audioObj)
-            ));
-    }
-
     public function getPlayersJSON()
     {
         $data = DB::table('user_players')

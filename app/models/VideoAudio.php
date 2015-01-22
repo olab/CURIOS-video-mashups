@@ -5,11 +5,11 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class UserPlayer extends Eloquent
+class VideoAudio extends Eloquent
 {
-	protected $table = 'user_players';
+	protected $table = 'video_audio';
 
-    protected $fillable = ['user_id', 'player_id'];
+    protected $fillable = ['video_id', 'audio_id'];
 
     public $timestamps = false;
 }

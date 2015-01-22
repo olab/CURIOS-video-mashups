@@ -10,16 +10,18 @@
         $scope.screenWidth = 480;
         $scope.screenHeight = 360;
         $scope.stepNum = 1;
-        $scope.annotationForDelete = false;
         $scope.player = {
+            id: 0,
+            idBase64: '',
             originalUrl: 'https://www.youtube.com/watch?v=iS0wuN_6wyw',
             videoCode: '',
             start: {h: 0, m: 0, s: 0},
             end: {h: 0, m: 0, s: 0},
             volume: 100
         };
-        $scope.annotation = getDefaultAnnotation();
+        $scope.playerApi = {};
         $scope.audio = {
+            path: '',
             exist: '',
             start: {h: 0, m: 0, s: 0},
             end: {h: 0, m: 0, s: 0},
@@ -27,7 +29,10 @@
             note: '',
             uploaded: 0
         };
-        $scope.playerApi = {};
+        $scope.annotation = getDefaultAnnotation();
+        $scope.annotationForDelete = false;
+        $scope.annotations = [];
+
         $scope.videoTime = {
             hours: [],
             minutes: [],
@@ -39,68 +44,53 @@
             seconds: []
         };
 
+        $scope.wasGenerated = false;
+
         $scope.setVideoTimeRange = function(){
             $scope.$apply(function() {
-                var seconds = $scope.playerApi.getDuration() - 1,// minus 0 sec
-                    minutes = seconds / 60,
-                    hours = minutes / 60;
-
-                $scope.player.end.h = Math.floor(hours);
-                $scope.player.end.m = Math.floor(minutes) % 60;
-                $scope.player.end.s = Math.floor(seconds) % 60;
-
-                seconds = (seconds < 60) ? seconds : 60;
-                minutes = (minutes < 60) ? minutes : 60;
-
-                for (var h = 0; h < hours; h++) {
-                    $scope.videoTime.hours.push(h);
-                }
-
-                for (var m = 0; m < minutes; m++) {
-                    $scope.videoTime.minutes.push(m);
-                }
-                for (var s = 0; s < seconds; s++) {
-                    $scope.videoTime.seconds.push(s);
-                }
+                var seconds = $scope.playerApi.getDuration() - 1;// minus 0 sec
+                setTimeRange(seconds, $scope.videoTime, $scope.player.end);
             });
         };
 
         $scope.setAudioRange = function(){
             $scope.$apply(function() {
-                var audio = document.getElementById('audioFileUploaded'),
-                    seconds = audio.duration,
-                    minutes = seconds / 60,
-                    hours = minutes / 60;
-
-                $scope.audio.end.h = Math.floor(hours);
-                $scope.audio.end.m = Math.floor(minutes) % 60;
-                $scope.audio.end.s = Math.floor(seconds) % 60;
-
-                seconds = (seconds < 60) ? seconds : 60;
-                minutes = (minutes < 60) ? minutes : 60;
-
-                for (var h = 0; h < hours; h++) {
-                    $scope.audioTime.hours.push(h);
-                }
-
-                for (var m = 0; m < minutes; m++) {
-                    $scope.audioTime.minutes.push(m);
-                }
-                for (var s = 0; s < seconds; s++) {
-                    $scope.audioTime.seconds.push(s);
-                }
+                var audio = document.getElementById('audioFileUploaded');
+                setTimeRange(audio.duration, $scope.audioTime, $scope.audio.end);
             });
+        };
+
+        function setTimeRange(seconds, rangeObj, endTimeObj){
+            var minutes = seconds / 60,
+                hours = minutes / 60;
+
+            endTimeObj.h = Math.floor(hours);
+            endTimeObj.m = Math.floor(minutes) % 60;
+            endTimeObj.s = Math.floor(seconds) % 60;
+
+            seconds = (seconds < 60) ? seconds : 60;
+            minutes = (minutes < 60) ? minutes : 60;
+
+            for (var h = 0; h < hours; h++) {
+                rangeObj.hours.push(h);
+            }
+
+            for (var m = 0; m < minutes; m++) {
+                rangeObj.minutes.push(m);
+            }
+            for (var s = 0; s < seconds; s++) {
+                rangeObj.seconds.push(s);
+            }
         }
     }
 
     function FirstStep($scope){
+        var $mainScope = $scope.$parent;
         $scope.toSecondStep = function(){
-            var $mainScope = $scope.$parent;
-
             $mainScope.stepNum = 2;
-            $mainScope.player.videoCode = getVideoCode($mainScope.player.originalUrl);
+            $mainScope.player.videoCode = getYoutubeCode($mainScope.player.originalUrl);
             $mainScope.playerApi = createPlayer($scope);
-        }
+        };
     }
 
     function SecondStep($scope, $http){
@@ -145,6 +135,7 @@
 
                 request.onload = function () {
                     data = angular.fromJson(request.response);
+                    $mainScope.audio.path = data.src;
                     $mainScope.audio.note = file.name;
 
                     var srcToMp3 = document.getElementById('srcToMp3');
@@ -171,6 +162,7 @@
             var newAnnotation = document.createElement('div');
 
             newAnnotation.className = 'annotation';
+            newAnnotation.dataset.id = $mainScope.annotations.length;
             newAnnotation.style.position = 'absolute';
             newAnnotation.style.top = $mainScope.annotation.y + 'px';
             newAnnotation.style.left = $mainScope.annotation.x + 'px';
@@ -187,6 +179,9 @@
             }
 
             editableScreen.appendChild(newAnnotation);
+
+            var annotationClone = cloneObj($mainScope.annotation);
+            $mainScope.annotations.push(annotationClone);
         };
 
         $scope.updateAnnotation = function(){
@@ -200,9 +195,13 @@
             $mainScope.annotationForDelete.style.opacity = 1 - $mainScope.annotation.transparency;
             $mainScope.annotationForDelete.innerHTML = $mainScope.annotation.text;
 
-            if ($mainScope.annotationForDelete.form == 'ellipse') {
+            if ($mainScope.annotation.form == 'ellipse') {
                 $mainScope.annotationForDelete.style.borderRadius = '100%';
+            } else {
+                $mainScope.annotationForDelete.style.borderRadius = '0';
             }
+
+            $mainScope.annotations[$mainScope.annotationForDelete.dataset.id] = cloneObj($mainScope.annotation);
         };
 
         $scope.resetAnnotationForm = function(){
@@ -217,18 +216,51 @@
 
         $scope.toFifthStep = function(){
             $mainScope.stepNum = 5;
+        };
+
+        function cloneObj(obj){
+            var clone = {};
+            for (var property in obj) {
+                if (typeof obj[property] === 'object') {
+                    clone[property] = cloneObj(obj[property]);
+                } else {
+                    clone[property] = obj[property];
+                }
+            }
+            return clone;
         }
     }
 
     function FifthStep($scope, $http){
+        var $mainScope = $scope.$parent;
         $scope.outputResult = function(){
             var resultScreen = document.getElementById('resultScreen');
             var embed = document.createElement('embed');
 
-            embed.src = 'http://videoplayer/player/embed?slug=NQ==';
-            embed.width = '660px';
-            embed.height = '485px';
+            embed.src = 'http://videoplayer/player/embed?slug=' + $mainScope.player.idBase64;
+            embed.width = '480px';
+            embed.height = '365px';
             resultScreen.appendChild(embed);
+        };
+
+        $scope.generate = function () {
+            var $allData = {
+                player: $mainScope.player,
+                audio: $mainScope.audio,
+                annotations: $mainScope.annotations
+            };
+
+            $http.post('generate', {
+                json: angular.toJson($allData)
+            }).success(function(data){
+                $mainScope.wasGenerated = true;
+                $mainScope.player.id = parseInt(data.id);
+                $mainScope.player.idBase64 = data.idBase64;
+                document.getElementById('resultCode').innerHTML =
+                    '<embed src="http://videoplayer/player/embed?slug=' + data.idBase64 + '" width="480px" height="360px"></embed>';
+            }).error(function(e){
+                console.error(e.error.message);
+            });
         }
     }
 
@@ -249,7 +281,7 @@
         }
     }
 
-    function getVideoCode(url){
+    function getYoutubeCode(url){
         var videoCode = url.split('v=')[1];
         var ampersandPosition = videoCode.indexOf('&');
         if(ampersandPosition != -1) {

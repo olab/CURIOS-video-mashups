@@ -7,7 +7,7 @@
 
     <div ng-show="audio.exist">
         <audio ng-show="audio.uploaded" id="audioFileUploaded" controls>
-          <source id="srcToMp3" src="{{ URL::asset('audio/Carly Comando - Everyday.mp3')}}" type="audio/mpeg">
+          <source id="srcToMp3" src="" type="audio/mpeg">
         </audio>
         <br>
         <input type="file" id="audioFile">
