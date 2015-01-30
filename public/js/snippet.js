@@ -254,7 +254,7 @@
                 annotations: $mainScope.annotations
             };
 
-            $http.post('generate', {
+            $http.post('player/generate', {
                 json: angular.toJson($allData)
             }).success(function(data){
                 $mainScope.wasGenerated = true;
