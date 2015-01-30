@@ -1,8 +1,36 @@
-.settings-bl,
+body {
+    margin: 50px 40px;
+    background-color: #b8b8b8;
+}
+
+h1 {
+    background-color: #330a38;
+    color: white;
+    padding: 20px 30px;
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+}
+select,
+input[type="text"],
+.annotation-text{
+    border: 0;
+    padding: 0 5px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+input[type="text"] {
+    width: 50px;
+}
+.body-bl{
+    background-color: #dfdddd;
+    padding: 15px 30px;
+    min-height: 440px;
+}
 .result-bl {
-    display: inline-block;
-    width: calc(50% - 2px);
-    vertical-align: top;
+    float: right;
 }
 
 #editableScreen,
@@ -10,34 +38,201 @@
     position: relative;
     display: block;
     width: 480px;
-    margin: 0 auto;
+    height: 360px;
 }
 
-.step {
-    margin-bottom: 5px;
-    padding: 5px;
-    border: 1px solid blue;
+.step,
+.step-question {
+    position: relative;
+    margin-bottom: 10px;
+    padding: 0 15px;
+    border: 1px solid #d4ced3;
+    background-color: #f2f1f1;
 }
-#videoUrl {
-    width: 400px;
+.step-question {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
-.label-column{
+.step-first{
+    padding: 15px;
+}
+.step-first .btn-green{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.left-column {
+    vertical-align: top;
     display: inline-block;
-    width: 170px;
+    width: 65%;
 }
-.next-step{
-    float: right;
+.step-second {
+    padding-top: 10px;
+    padding-bottom: 15px;
 }
-.annotation{
-    text-align: center;
+.step-second .label-header{
+    display: block;
+    margin-bottom: 10px;
+}
+.step-second .label-column{
+    width: 70px;
+}
+.step-three .btn-gray{
+    margin-right: -4px;
+}
+.step-three,
+.step-fourth{
+    margin-top: -10px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+.step-fifth{
+    padding: 0;
+}
+.step-fifth .btn-gray{
+    margin-left: -5px;
+}
+#resultCode{
+    width: 100%;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    border: 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    outline: none;
+    margin-bottom: -4px;
+}
+#videoUrl{
+    position: absolute;
+    color: #343434;
+    border: 0;
+    height: 30px;
+    top: 10px;
+    left: 170px;
+    padding-left: 15px;
+    width: 86%;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.label-column{
+    vertical-align: top;
+    display: inline-block;
+    width: 120px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+}
+.label-header{
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #330a38;
+}
+.label-time{
+    display: inline-block;
+    margin-right: 15px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+}
+.label-answer{
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+}
+.column{
+    display: inline-block;
+    width: 20%;
+    margin: -5px 0;
 }
 .tooltip {
     position: relative;
     top: -5px;
     left: 3px;
-    border: 1px solid #000000;
+    border: 1px solid #330a38;
     border-radius: 50%;
-    font-size: 10px;
-    background: yellow;
+    font-family: "Open Sans", sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    background: white;
     padding: 0 3px;
+}
+.btn-green,
+.btn-gray,
+.btn-purple{
+    border: 0;
+    height: 32px;
+    padding: 0 15px;
+    cursor: pointer;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+}
+.btn-green{
+    background-color: #9ec32e;
+    color: white;
+}
+.btn-green:hover{
+    background-color: #90b22a;
+}
+.btn-gray{
+    background-color: #f2f1f1;
+    /*border: 1px solid #cadb95;*/
+    color: #9abe2c;
+}
+.btn-gray:hover{
+    border-color: #e6e6e6;
+    background-color: #e6e6e6;
+}
+.btn-purple{
+    position: relative;
+    background-color: #f2f1f1;
+    /*border: 1px solid #330a38;*/
+    color: #330a38;
+    bottom: -15px;
+    margin-right: -4px;
+}
+.btn-purple:hover{
+    border-color: #e6e6e6;
+    background-color: #e6e6e6;
+}
+.bottom-right{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.bottom-right .btn-green{
+    margin-left: -5px;
+}
+.setting-row{
+    margin: 5px 0;
+}
+#yesAudio,
+#noAudio{
+    position: relative;
+    top: 1px;
+}
+.audio-note{
+    margin: 10px 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+}
+.audio-settings{
+    margin-top: 5px;
+}
+.annotation-text{
+    width: 70%;
+}
+.label-result{
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: italic;
+}
+#audioFile{
+    display: none;
 }

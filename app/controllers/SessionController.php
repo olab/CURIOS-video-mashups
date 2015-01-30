@@ -11,7 +11,7 @@ class SessionController extends \BaseController
     public function store()
     {
         if (Auth::attempt(Input::only('email', 'password'))) {
-            return Redirect::to('player/snippet');
+            return Redirect::to('snippet');
         }
         return Redirect::back()->withInput()->withErrors(['wrong credentials!']);
     }

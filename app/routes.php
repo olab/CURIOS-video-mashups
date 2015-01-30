@@ -20,7 +20,7 @@ Route::post('player/saveSettings', ['as' => 'player.saveSettings', 'uses' => 'Pl
 Route::get('player/settings', 'PlayerController@settings')
     ->before('auth');
 
-Route::get('player/snippet', 'SnippetController@create')
+Route::get('snippet', 'SnippetController@create')
     ->before('auth');
 Route::post('player/ajaxUploadAudio', 'SnippetController@ajaxUploadAudio')
     ->before('auth');
@@ -28,11 +28,11 @@ Route::post('player/generate', 'SnippetController@generate')
     ->before('auth');
 Route::get('player/embed', 'SnippetController@embed');
 
-Route::get('login', 'SessionController@create');
+Route::get('/', 'SessionController@create');
 Route::get('logout', 'SessionController@destroy');
 Route::resource('session', 'SessionController');
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+//Route::get('/', function()
+//{
+//	return View::make('hello');
+//});

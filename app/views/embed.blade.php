@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>Player</title>
         {{HTML::style('css/embed.css')}}
+        {{HTML::style('css/common.css')}}
     </head>
     <body>
         <div id="screen">
@@ -14,7 +15,9 @@
         </audio>
 
         <script>
-            var $screen = document.getElementById('screen'),
+            var YT_VIDEO_PLAY = 1,
+                YT_VIDEO_STOP = 2,
+                $screen = document.getElementById('screen'),
                 $audio = document.getElementById('audio'),
                 pathToAudio = '{{ URL::to('/audio/'); }}',
                 audioActive = false,
@@ -23,6 +26,7 @@
                 video = {{ $videoJSON }},
                 audio = {{ $audioJSON }},
                 annotations = {{ $annotationsJSON }},
+                htmlAnnotations = [],
                 currentVideoTime = video.start_time,
                 previousVideoTime = 0,
                 audioStartTime = video.start_time + audio.start_time,
@@ -44,13 +48,25 @@
                     audioActive = true;
                     if (videoIsPlayed && ! audioIsPlayed) {
                         player.setVolume(video.volume);
-                        onAudioStateChange(1);
+                        onAudioStateChange();
                     }
                 } else {
                     audioActive = false;
-                    onAudioStateChange(2);
+                    onAudioStateChange();
                 }
+
+                annotationsEvent(currentVideoTime);
             }, 1000);
+
+            function annotationsEvent(currentVideoTime){
+                annotations.forEach(function(annotation, idNum){
+                    if (annotation.start_time <= currentVideoTime) {
+                        htmlAnnotations[idNum].style.display = 'block';
+                    } else {
+                        htmlAnnotations[idNum].style.display = 'none';
+                    }
+                });
+            }
 
             // This code loads the IFrame Player API code asynchronously.
             var tag = document.createElement('script');
@@ -91,9 +107,9 @@
                   done = true;
                 }
 
-                if (event.data == 1) {
+                if (event.data == YT_VIDEO_PLAY) {
                     videoIsPlayed = true;
-                } else if (event.data == 2) {
+                } else if (event.data == YT_VIDEO_STOP) {
                     videoIsPlayed = false;
                 }
 
@@ -111,7 +127,7 @@
                 $audio.volume = audio.volume / 100;
             }
 
-            function onAudioStateChange(status) {
+            function onAudioStateChange() {
                 if (videoIsPlayed && audioActive) {
                     audioIsPlayed = true;
                     $audio.play();
@@ -127,6 +143,8 @@
                 var annotation = annotations[i],
                     newElement = document.createElement('div');
 
+                newElement.id = 'annotation' + i;
+                newElement.style.display = 'none';
                 newElement.style.position = 'absolute';
                 newElement.style.backgroundColor = annotation.backGround;
                 newElement.style.color = annotation.color;
@@ -141,6 +159,7 @@
                 newElement.innerHTML = annotation.text;
 
                 $screen.appendChild(newElement);
+                htmlAnnotations.push(newElement)
             }
             // ----- end annotation block ----- //
         </script>

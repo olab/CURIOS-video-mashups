@@ -1,10 +1,6 @@
-<div ng-controller="FifthStep" ng-show="stepNum > 4" class="step">
-    <button ng-click="generate()">Generate code</button>
-    <div ng-show="wasGenerated">
-        Code to copy/paste in your site
-        <br>
-        <textarea style="width: 99%;" id="resultCode"></textarea>
-        <br>
-        <button ng-click="outputResult()">Watch result</button>
-    </div>
+<div ng-controller="FifthStep" class="step step-fifth" ng-show="stepNum > 4">
+    <button ng-click="generate()" class="btn-green">Generate code</button>
+    <button ng-click="outputResult()" class="btn-gray" ng-show="wasGenerated">Watch result</button>
+    <span class="label-result">Code to copy/paste in your site</span>
+    <textarea id="resultCode" ng-show="wasGenerated"></textarea>
 </div>

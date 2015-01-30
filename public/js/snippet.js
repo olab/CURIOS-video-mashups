@@ -130,7 +130,7 @@
                 data.append('file', file);
 
                 var request = new XMLHttpRequest();
-                request.open('POST', 'ajaxUploadAudio');
+                request.open('POST', 'player/ajaxUploadAudio');
                 request.send(data);
 
                 request.onload = function () {
@@ -147,6 +147,10 @@
                     };
                 };
             }
+        };
+
+        $scope.clickAudioFile = function(){
+            document.getElementById('audioFile').click();
         };
 
         $scope.updateAudio = function(){
@@ -170,7 +174,7 @@
             newAnnotation.style.height = $mainScope.annotation.height + 'px';
             newAnnotation.style.background = $mainScope.annotation.backGround;
             newAnnotation.style.color = $mainScope.annotation.color;
-            newAnnotation.style.fontSize = $mainScope.annotation.fontSize;
+            newAnnotation.style.fontSize = $mainScope.annotation.fontSize + 'px';
             newAnnotation.style.opacity = 1 - $mainScope.annotation.transparency;
             newAnnotation.innerHTML = $mainScope.annotation.text;
 
@@ -266,6 +270,7 @@
 
     function getDefaultAnnotation(){
         return {
+            exist: '',
             form: 'rectangle',
             backGround: 'gray',
             x: 0,
