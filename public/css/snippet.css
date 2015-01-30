@@ -236,3 +236,11 @@ input[type="text"] {
 #audioFile{
     display: none;
 }
+#btn-logout{
+    display: inline-block;
+    color: white;
+    border: 1px solid white;
+    text-decoration: none;
+    padding: 0 15px 3px 10px;
+    float: right;
+}

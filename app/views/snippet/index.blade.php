@@ -12,6 +12,7 @@
     <body ng-controller="Main">
         <h1>
             OpenLabyrinth - Video service
+            <a href="{{URL::to('/logout')}}" id="btn-logout">Logout</a>
         </h1>
 
         <div class="body-bl">

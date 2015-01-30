@@ -19,6 +19,6 @@ class SessionController extends \BaseController
     public function destroy()
     {
         Auth::logout();
-        return Redirect::route('session.create');
+        return Redirect::to('/');
     }
 }
