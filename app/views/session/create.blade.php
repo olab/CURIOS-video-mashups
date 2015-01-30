@@ -1,24 +1,32 @@
 <!doctype html>
 <html>
-    <head></head>
+    <head>
+        {{HTML::style('css/snippet.css')}}
+    </head>
     <body>
         @if($errors->any())
             <h4>{{$errors->first()}}</h4>
         @endif
-        {{Form::open(['route' => 'session.store'])}}
-            <div>
-                {{Form::label('email', 'Email:')}}
-                {{Form::email('email')}}
-            </div>
+        <h1>OpenLabyrinth - Video service</h1>
 
-            <div>
-                {{Form::label('password', 'Password:')}}
-                {{Form::password('password')}}
-            </div>
+        <div class="body-bl">
+            <div class="step step-login">
+                {{Form::open(['route' => 'session.store'])}}
+                    <div class="setting-row">
+                        {{Form::label('email', 'Email:', array('class' => 'label-column'))}}
+                        {{Form::email('email')}}
+                    </div>
 
-            <div>
-                {{Form::submit('Login')}}
+                    <div class="setting-row">
+                        {{Form::label('password', 'Password:', array('class' => 'label-column'))}}
+                        {{Form::password('password')}}
+                    </div>
+
+                    <div>
+                        {{Form::submit('Login', array('class' => 'btn-green'))}}
+                    </div>
+                {{Form::close()}}
             </div>
-        {{Form::close()}}
+        </div>
     </body>
 </html>
