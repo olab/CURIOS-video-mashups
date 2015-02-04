@@ -7,7 +7,7 @@
         @if($errors->any())
             <h4>{{$errors->first()}}</h4>
         @endif
-        <h1>OpenLabyrinth - Video service</h1>
+        <h1>CURIOS video mashup service</h1>
 
         <div class="body-bl">
             <div class="step step-login">

@@ -1,5 +1,5 @@
 <div ng-controller="SecondStep" ng-show="stepNum > 1" class="step step-second">
-    <label class="label-header">Video settings:</label>
+    <label class="label-header">Video timings:</label>
     <div class="setting-row">
         <label class="label-column">Starts</label>
         @include('snippet.templates.selectTime', array('model' => 'player.start', 'options' => 'videoTime'))

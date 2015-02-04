@@ -1,9 +1,9 @@
-body {
+body{
     margin: 50px 40px;
     background-color: #b8b8b8;
 }
 
-h1 {
+h1{
     background-color: #330a38;
     color: white;
     padding: 20px 30px;
@@ -33,11 +33,11 @@ input:-webkit-autofill {
     background-color: #dfdddd;
     padding: 15px 30px;
     min-height: 440px;
+    overflow: auto;
 }
 .result-bl {
     float: right;
 }
-
 #editableScreen,
 #resultScreen{
     position: relative;
@@ -45,7 +45,10 @@ input:-webkit-autofill {
     width: 480px;
     height: 360px;
 }
-
+#resultScreen{
+    margin-top: 15px;
+    display: none;
+}
 .step,
 .step-question {
     position: relative;
@@ -64,14 +67,14 @@ input:-webkit-autofill {
 .step-first .btn-green{
     position: absolute;
     right: 10px;
-    top: 10px;
+    top: 9px;
 }
-.left-column {
+.left-column{
     vertical-align: top;
     display: inline-block;
     width: 65%;
 }
-.step-second {
+.step-second{
     padding-top: 10px;
     padding-bottom: 15px;
 }
@@ -84,6 +87,9 @@ input:-webkit-autofill {
 }
 .step-three .btn-gray{
     margin-right: -4px;
+}
+.step-three .label-column{
+    width: 165px;
 }
 .step-three,
 .step-fourth{
@@ -251,6 +257,7 @@ input:-webkit-autofill {
 #audioFile{
     display: none;
 }
+#btn-reload,
 #btn-logout{
     display: inline-block;
     color: white;
@@ -258,4 +265,18 @@ input:-webkit-autofill {
     text-decoration: none;
     padding: 0 15px 3px 10px;
     float: right;
+}
+#btn-reload{
+    margin-right: 15px;
+}
+#audioFileLoader{
+    display: none;
+    margin-top: 5px;
+    width: 208px;
+    height: 13px;
+    background: url("../img/audioFileLoader.gif") -6px -3px;
+}
+.setting-row .color{
+    color: transparent !important;
+    cursor: pointer;
 }

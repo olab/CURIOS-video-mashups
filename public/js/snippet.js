@@ -1,5 +1,4 @@
 (function(){
-
     // This code loads the IFrame Player API code asynchronously.
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -30,6 +29,7 @@
             uploaded: 0
         };
         $scope.annotation = getDefaultAnnotation();
+        $scope.annotationExist = '';
         $scope.annotationForDelete = false;
         $scope.annotations = [];
 
@@ -117,13 +117,15 @@
             }
         };
 
-        $scope.uploadAudio = function(){
-            var file = document.getElementById('audioFile').files[0];
+        $scope.clickAudioFile = function(){
+            var audioFile = document.getElementById('audioFile');
+            audioFile.click();
+            audioFile.onchange = function(){
+                var audioFileLoader = document.getElementById('audioFileLoader');
+                audioFileLoader.style.display = 'block';
 
-            if ((typeof file == "undefined") && ($scope.audio.note == '')) {
-                $scope.audio.note = 'Please, choose file for upload';
-            } else {
-                $scope.audio.note = 'Upload...';
+                var file = audioFile.files[0];
+
                 $scope.audio.uploaded = 1;
 
                 var data = new FormData();
@@ -144,18 +146,14 @@
 
                     srcToMp3.parentNode.onloadeddata = function(){
                         $scope.setAudioRange();
+                        audioFileLoader.style.display = 'none';
                     };
                 };
-            }
-        };
-
-        $scope.clickAudioFile = function(){
-            document.getElementById('audioFile').click();
+            };
         };
 
         $scope.updateAudio = function(){
             $mainScope.playerApi.setVolume($mainScope.player.volume);
-
         }
     }
 
@@ -172,14 +170,17 @@
             newAnnotation.style.left = $mainScope.annotation.x + 'px';
             newAnnotation.style.width = $mainScope.annotation.width + 'px';
             newAnnotation.style.height = $mainScope.annotation.height + 'px';
-            newAnnotation.style.background = $mainScope.annotation.backGround;
-            newAnnotation.style.color = $mainScope.annotation.color;
-            newAnnotation.style.fontSize = $mainScope.annotation.fontSize + 'px';
-            newAnnotation.style.opacity = 1 - $mainScope.annotation.transparency;
+            newAnnotation.style.background = '#' + $mainScope.annotation.backGround;
+            newAnnotation.style.color = '#' + $mainScope.annotation.color;
+            newAnnotation.style.fontSize = $mainScope.annotation.fontSize;
+            newAnnotation.style.opacity = 1 - $mainScope.annotation.transparency / 100;
             newAnnotation.innerHTML = $mainScope.annotation.text;
 
             if ($mainScope.annotation.form == 'ellipse') {
                 newAnnotation.style.borderRadius = '100%';
+                newAnnotation.style.padding = $mainScope.annotation.height / 4 + 'px';
+            } else {
+                newAnnotation.style.padding = 0;
             }
 
             editableScreen.appendChild(newAnnotation);
@@ -193,16 +194,17 @@
             $mainScope.annotationForDelete.style.left = $mainScope.annotation.x + 'px';
             $mainScope.annotationForDelete.style.width = $mainScope.annotation.width + 'px';
             $mainScope.annotationForDelete.style.height = $mainScope.annotation.height + 'px';
-            $mainScope.annotationForDelete.style.background = $mainScope.annotation.backGround;
-            $mainScope.annotationForDelete.style.color = $mainScope.annotation.color;
+            $mainScope.annotationForDelete.style.background = '#' + $mainScope.annotation.backGround;
+            $mainScope.annotationForDelete.style.color = '#' + $mainScope.annotation.color;
             $mainScope.annotationForDelete.style.fontSize = $mainScope.annotation.fontSize;
-            $mainScope.annotationForDelete.style.opacity = 1 - $mainScope.annotation.transparency;
+            $mainScope.annotationForDelete.style.opacity = 1 - $mainScope.annotation.transparency / 100;
             $mainScope.annotationForDelete.innerHTML = $mainScope.annotation.text;
 
             if ($mainScope.annotation.form == 'ellipse') {
                 $mainScope.annotationForDelete.style.borderRadius = '100%';
+                $mainScope.annotationForDelete.style.padding = $mainScope.annotation.height / 4 + 'px';
             } else {
-                $mainScope.annotationForDelete.style.borderRadius = '0';
+                $mainScope.annotationForDelete.style.padding = 0;
             }
 
             $mainScope.annotations[$mainScope.annotationForDelete.dataset.id] = cloneObj($mainScope.annotation);
@@ -211,6 +213,8 @@
         $scope.resetAnnotationForm = function(){
             $mainScope.annotationForDelete = false;
             $mainScope.annotation = getDefaultAnnotation();
+            document.getElementById('annotationBg').style.backgroundColor = "rgb(0, 0, 0)";
+            document.getElementById('annotationColor').style.backgroundColor = "rgb(255, 255, 255)";
         };
 
         $scope.deleteAnnotation = function(){
@@ -244,6 +248,7 @@
             embed.src = baseUrl + '/player/embed?slug=' + $mainScope.player.idBase64;
             embed.width = '480px';
             embed.height = '365px';
+            resultScreen.style.display = 'block';
             resultScreen.appendChild(embed);
         };
 
@@ -270,9 +275,8 @@
 
     function getDefaultAnnotation(){
         return {
-            exist: '',
             form: 'rectangle',
-            backGround: 'gray',
+            backGround: '000000',
             x: 0,
             y: 0,
             height: 100,
@@ -281,8 +285,8 @@
             end: {h: 0, m: 0, s: 0},
             text: '',
             transparency: 0,
-            fontSize: 12,
-            color: 'black'
+            fontSize: '12px',
+            color: 'ffffff'
         }
     }
 
@@ -321,15 +325,23 @@
             $mainScope.annotation.y = parseInt(focusedPopup.style.top);
             $mainScope.annotation.width = parseInt(focusedPopup.style.width);
             $mainScope.annotation.height = parseInt(focusedPopup.style.height);
-            $mainScope.annotation.backGround = focusedPopup.style.background;
-            $mainScope.annotation.color = focusedPopup.style.color;
+            $mainScope.annotation.backGround = rgb2hex(focusedPopup.style.background);
+            $mainScope.annotation.color = rgb2hex(focusedPopup.style.color);
             $mainScope.annotation.fontSize = focusedPopup.style.fontSize;
-            $mainScope.annotation.transparency = 1 - focusedPopup.style.opacity;
+            $mainScope.annotation.transparency = (1 - focusedPopup.style.opacity) * 100;
             $mainScope.annotation.text = focusedPopup.innerHTML;
             $mainScope.annotation.form = (focusedPopup.style.borderRadius) ? 'ellipse' : 'rectangle';
 
             startX = $event.screenX - parseInt(focusedPopup.style.left);
             startY = $event.screenY - parseInt(focusedPopup.style.top);
+
+            function rgb2hex(rgb){
+                rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+                return (rgb && rgb.length === 4) ?
+                ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+                ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+                ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+            }
         };
 
         $scope.focusOut = function(){

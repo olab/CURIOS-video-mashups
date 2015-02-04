@@ -60,7 +60,7 @@
 
             function annotationsEvent(currentVideoTime){
                 annotations.forEach(function(annotation, idNum){
-                    if (annotation.start_time <= currentVideoTime) {
+                    if (annotation.start_time <= currentVideoTime && annotation.end_time >= currentVideoTime) {
                         htmlAnnotations[idNum].style.display = 'block';
                     } else {
                         htmlAnnotations[idNum].style.display = 'none';
@@ -84,9 +84,7 @@
                         start: video.start_time,
                         end: video.end_time,
                         theme: 'light',
-                        controls: 1,
-                        rel: 0,
-                        showinfo: '0'
+                        controls: 1
                     },
                     events: {
                         'onReady': onPlayerReady,
@@ -96,16 +94,11 @@
             }
 
             function onPlayerReady(event) {
-                player.setVolume(100);
-                //event.target.playVideo();
+                event.target.unMute();
+                event.target.setVolume(video.volume);
             }
 
-            var done = false;
             function onPlayerStateChange(event) {
-                if (event.data == YT.PlayerState.PLAYING && !done) {
-                  setTimeout(stopVideo, 600000);
-                  done = true;
-                }
 
                 if (event.data == YT_VIDEO_PLAY) {
                     videoIsPlayed = true;
@@ -141,18 +134,21 @@
             // ----- annotation block ----- //
             for(var i = 0; i < annotations.length; i++){
                 var annotation = annotations[i],
-                    newElement = document.createElement('div');
+                    newElement = document.createElement('div'),
+                    isRect = (annotation.form == 'rectangle');
 
                 newElement.id = 'annotation' + i;
+                newElement.className = 'annotation';
                 newElement.style.display = 'none';
                 newElement.style.position = 'absolute';
-                newElement.style.backgroundColor = annotation.backGround;
-                newElement.style.color = annotation.color;
+                newElement.style.backgroundColor = '#' + annotation.backGround;
+                newElement.style.color = '#' + annotation.color;
                 newElement.style.fontSize = annotation.fontSize + 'px';
-                newElement.style.borderRadius = (annotation.form == 'rectangle') ? 0 : '100%';
+                newElement.style.borderRadius = isRect ? 0 : '100%';
+                newElement.style.padding = isRect ? 0 : (annotation.height / 4) + 'px';
                 newElement.style.height = annotation.height + 'px';
                 newElement.style.width = annotation.width + 'px';
-                newElement.style.opacity = 1 - annotation.transparency;
+                newElement.style.opacity = 1 - annotation.transparency / 100;
                 newElement.style.top = annotation.y + 'px';
                 newElement.style.left = annotation.x + 'px';
 

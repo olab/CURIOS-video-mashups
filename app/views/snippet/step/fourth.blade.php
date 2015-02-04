@@ -1,13 +1,13 @@
 <div ng-controller="FourthStep" ng-show="stepNum > 3">
     <div class="step-question">
         <label class="label-header">Do you want to add annotation?</label>
-        <input id="yesAnnotation" type="radio" name="annotation" ng-model="annotation.exist" value="yes">
+        <input id="yesAnnotation" type="radio" name="annotation" ng-model="annotationExist" value="yes">
         <label for="yesAnnotation" class="label-answer">Yes</label>
-        <input id="noAnnotation" type="radio" name="annotation" ng-model="annotation.exist" value="no" ng-change="toFifthStep()">
+        <input id="noAnnotation" type="radio" name="annotation" ng-model="annotationExist" value="no" ng-change="toFifthStep()">
         <label for="noAnnotation" class="label-answer">No</label>
     </div>
-    <div ng-show="annotation.exist" class="step step-fourth">
-        <label class="label-header">Audio settings:</label>
+    <div ng-show="annotationExist" class="step step-fourth">
+        <label class="label-header">Annotation settings:</label>
         <div class="setting-row">
             <label class="label-column">Form</label>
             <select ng-model="annotation.form">
@@ -18,7 +18,7 @@
         <div class="column">
             <div class="setting-row">
                 <label class="label-column">Background</label>
-                <input type="text" ng-model="annotation.backGround">
+                <input id="annotationBg" type="text" class="color" ng-model="annotation.backGround">
             </div>
             <div class="setting-row">
                 <label class="label-column">Height</label>
@@ -35,7 +35,7 @@
         </div>
         <div class="column">
             <div class="setting-row">
-                <label class="label-column">Transparency<span class="tooltip" title="Background transparency. Range from 0 to 1.">?</span></label>
+                <label class="label-column">Transparency<span class="tooltip" title="Background transparency. Range from 0 to 100.">?</span></label>
                 <input type="text" ng-model="annotation.transparency">
             </div>
             <div class="setting-row">
@@ -48,7 +48,7 @@
             </div>
             <div class="setting-row">
                 <label class="label-column">Font color</label>
-                <input type="text" ng-model="annotation.color">
+                <input id="annotationColor" type="text" class="color" ng-model="annotation.color">
             </div>
         </div>
         <div class="setting-row">

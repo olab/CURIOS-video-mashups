@@ -6,13 +6,13 @@
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
         {{HTML::style('css/snippet.css')}}
         {{HTML::script('js/angular/angular.min.js')}}
-        {{HTML::script('js/snippet.js')}}
         {{HTML::style('css/common.css')}}
     </head>
     <body ng-controller="Main">
         <h1>
-            OpenLabyrinth - Video service
+            CURIOS video mashup service
             <a href="{{URL::to('/logout')}}" id="btn-logout">Logout</a>
+            <a href="{{URL::to('/snippet')}}" id="btn-reload">Create new snippet</a>
         </h1>
 
         <div class="body-bl">
@@ -40,5 +40,7 @@
         <script>
             var baseUrl = '{{URL::to('/')}}';
         </script>
+        {{HTML::script('js/snippet.js')}}
+        {{HTML::script('js/jscolor/jscolor.js')}}
     </body>
 </html>

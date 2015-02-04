@@ -8,9 +8,9 @@
     </div>
 
     <div ng-show="audio.exist" class="step step-three">
-        <button ng-click="uploadAudio()" class="btn-gray">Upload File</button>
-        <button class="btn-gray" ng-click="clickAudioFile()">Choose file</button>
+        <button class="btn-gray" ng-click="clickAudioFile()">Choose and upload file</button>
         <input type="file" id="audioFile">
+        <div id="audioFileLoader"></div>
         <div ng-model="audio.note" class="audio-note">@{{ audio.note }}</div>
         <audio ng-show="audio.uploaded" id="audioFileUploaded" controls>
             <source id="srcToMp3" src="" type="audio/mpeg">
@@ -26,11 +26,11 @@
                 @include('snippet.templates.selectTime', array('model' => 'audio.end', 'options' => 'audioTime'))
             </div>
             <div class="setting-row">
-                <label for="audioVolume" class="label-column">Audio volume</label>
+                <label for="audioVolume" class="label-column">Appended audio volume</label>
                 <input id="audioVolume" type="text" ng-model="audio.volume">
             </div>
             <div class="setting-row">
-                <label for="videoVolume" class="label-column">Video volume</label>
+                <label for="videoVolume" class="label-column">Original audio volume</label>
                 <input id="videoVolume" type="text" ng-model="player.volume">
             </div>
         </div>
