@@ -59,6 +59,7 @@ class SnippetController extends \BaseController
 
         //save annotation
         foreach ($annotations as $annotation) {
+            if ( ! $annotation->save) continue;
             $annotationStart = $this->objToTime($annotation->start);
             $annotationEnd = $this->objToTime($annotation->end);
             $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,

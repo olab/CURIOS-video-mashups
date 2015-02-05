@@ -48,6 +48,8 @@ input:-webkit-autofill {
 #resultScreen{
     margin-top: 15px;
     display: none;
+    background: url("../img/videoFileLoader.gif") -5px -85px no-repeat;
+    background-size: 500px 500px;
 }
 .step,
 .step-question {
@@ -132,7 +134,7 @@ input:-webkit-autofill {
     top: 10px;
     left: 170px;
     padding-left: 15px;
-    width: 86%;
+    width: 79%;
     font-family: "Open Sans", sans-serif;
     font-size: 16px;
     font-weight: 400;
@@ -182,8 +184,7 @@ input:-webkit-autofill {
     padding: 0 3px;
 }
 .btn-green,
-.btn-gray,
-.btn-purple{
+.btn-gray{
     border: 0;
     height: 32px;
     padding: 0 15px;
@@ -205,18 +206,6 @@ input:-webkit-autofill {
     color: #9abe2c;
 }
 .btn-gray:hover{
-    border-color: #e6e6e6;
-    background-color: #e6e6e6;
-}
-.btn-purple{
-    position: relative;
-    background-color: #f2f1f1;
-    /*border: 1px solid #330a38;*/
-    color: #330a38;
-    bottom: -15px;
-    margin-right: -4px;
-}
-.btn-purple:hover{
     border-color: #e6e6e6;
     background-color: #e6e6e6;
 }
@@ -279,4 +268,8 @@ input:-webkit-autofill {
 .setting-row .color{
     color: transparent !important;
     cursor: pointer;
+}
+.annotation-action-bl{
+    position: relative;
+    bottom: -15px;
 }

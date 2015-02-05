@@ -63,9 +63,11 @@
             <label class="label-column">Text</label>
             <textarea class="annotation-text" ng-model="annotation.text"></textarea>
         </div>
-        <button ng-click="resetAnnotationForm()" class="btn-purple">Reset form</button>
-        <button ng-click="addAnnotation()" class="btn-purple">Add annotation</button>
-        <button ng-click="deleteAnnotation()" class="btn-purple" ng-show="annotationForDelete">Delete</button>
+        <div class="annotation-action-bl">
+            <button ng-click="resetAnnotationForm()" class="btn-gray">Reset form</button>
+            <button ng-click="addAnnotation()" class="btn-gray">Add annotation</button>
+            <button ng-click="deleteAnnotation()" class="btn-gray" ng-show="annotationForDelete">Delete</button>
+        </div>
         <div class="bottom-right">
             <button ng-click="updateAnnotation()" ng-show="annotationForDelete" class="btn-gray">Update</button>
             <button ng-click="toFifthStep()" ng-show="stepNum < 5" class="btn-green">Next</button>

@@ -218,6 +218,8 @@
         };
 
         $scope.deleteAnnotation = function(){
+            var removeId = $mainScope.annotationForDelete.dataset.id;
+            $mainScope.annotations[removeId].save = false;
             $mainScope.annotationForDelete.remove();
             $mainScope.annotationForDelete = false;
         };
@@ -249,6 +251,7 @@
             embed.width = '480px';
             embed.height = '365px';
             resultScreen.style.display = 'block';
+            resultScreen.innerHTML = '';
             resultScreen.appendChild(embed);
         };
 
@@ -276,6 +279,7 @@
     function getDefaultAnnotation(){
         return {
             form: 'rectangle',
+            save: true,
             backGround: '000000',
             x: 0,
             y: 0,

@@ -16,8 +16,9 @@
         </h1>
 
         <div class="body-bl">
-            @include('snippet.step.first')
+
             <div class="left-column">
+                @include('snippet.step.first')
                 @include('snippet.step.second')
                 @include('snippet.step.third')
                 @include('snippet.step.fourth')
