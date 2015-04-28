@@ -5,10 +5,11 @@
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    function Main($scope){
+    function Main($scope, $http){
         $scope.screenWidth = 480;
         $scope.screenHeight = 360;
         $scope.stepNum = 1;
+        $scope.slugToUpload = '==MQ';
         $scope.player = {
             id: 0,
             idBase64: '',
@@ -81,6 +82,91 @@
             for (var s = 0; s < seconds; s++) {
                 rangeObj.seconds.push(s);
             }
+        }
+
+        function setTime(seconds, obj){
+            obj.s = seconds % 60;
+            obj.m = Math.floor((seconds % 3600) / 60);
+            obj.h = Math.floor(seconds / 3600);
+        }
+
+        $scope.uploadBySlug = function(){
+            var slug = $scope.slugToUpload;
+            $http.post('player/uploadBySlug', {
+                slug: slug
+            }).success(function(data){
+
+                function setVideo(data, slug){
+
+                    $scope.player.id = data.id;
+                    $scope.player.idBase64 = slug;
+                    $scope.player.originalUrl = 'https://www.youtube.com/watch?v=' + data.code;
+                    $scope.player.videoCode = data.code;
+                    $scope.player.volume = data.volume;
+                    $scope.playerApi = createPlayer($scope);
+
+                    setTimeout(function(){
+                        $scope.$apply(function(){
+                            $scope.playerApi.setVolume(data.volume);
+                            setTime(data.start_time, $scope.player.start); // set player start time
+                            setTime(data.end_time, $scope.player.end); // set player end time
+                        });
+                    }, 1000);
+                }
+
+                function setAudio(data){
+                    if (data) {
+                        var src = '/audio/' + data.path;
+                        $scope.audio.uploaded = 1;
+                        $scope.audio.note = data.path;
+                        $scope.audio.path = src;
+                        $scope.audio.volume = data.volume;
+                        $scope.audio.exist = 'yes';
+
+                        var srcToMp3 = document.getElementById('srcToMp3');
+                        srcToMp3.src = src;
+                        srcToMp3.parentNode.load();
+                        srcToMp3.parentNode.onloadeddata = function(){
+                            $scope.setAudioRange();
+                            this.currentTime = data.start_time;
+                            setTime(data.start_time, $scope.audio.start); // set audio start time
+                            setTime(data.end_time, $scope.audio.end); // set audio end time
+                        };
+                    } else {
+                        $scope.audio.exist = '';
+                    }
+                }
+
+                function setAnnotation(data){
+                    $scope.annotationExist = data.length ? 'yes' : 'no';
+                    for(var i = 0; i < data.length; i++){
+                        addAnnotationToScreen(
+                            i,
+                            data[i].y,
+                            data[i].x,
+                            data[i].width,
+                            data[i].height,
+                            data[i].backGround,
+                            data[i].color,
+                            data[i].fontSize,
+                            data[i].transparency,
+                            data[i].text,
+                            data[i].form
+                        );
+                    }
+                    $scope.annotations.push(data[i]);
+                }
+
+                if (data.error){
+                    $scope.slugToUpload = data.error;
+                } else {
+                    setVideo(data.playerInfo, slug);
+                    setAudio(data.audioInfo);
+                    setAnnotation(data.annotationInfo);
+
+                    $scope.stepNum = 5;
+                }
+            });
         }
     }
 
@@ -160,30 +246,19 @@
     function FourthStep($scope, $http){
         var $mainScope = $scope.$parent;
         $scope.addAnnotation = function(){
-            var editableScreen = document.getElementById('editableScreen');
-            var newAnnotation = document.createElement('div');
-
-            newAnnotation.className = 'annotation';
-            newAnnotation.dataset.id = $mainScope.annotations.length;
-            newAnnotation.style.position = 'absolute';
-            newAnnotation.style.top = $mainScope.annotation.y + 'px';
-            newAnnotation.style.left = $mainScope.annotation.x + 'px';
-            newAnnotation.style.width = $mainScope.annotation.width + 'px';
-            newAnnotation.style.height = $mainScope.annotation.height + 'px';
-            newAnnotation.style.background = '#' + $mainScope.annotation.backGround;
-            newAnnotation.style.color = '#' + $mainScope.annotation.color;
-            newAnnotation.style.fontSize = $mainScope.annotation.fontSize;
-            newAnnotation.style.opacity = 1 - $mainScope.annotation.transparency / 100;
-            newAnnotation.innerHTML = $mainScope.annotation.text;
-
-            if ($mainScope.annotation.form == 'ellipse') {
-                newAnnotation.style.borderRadius = '100%';
-                newAnnotation.style.padding = $mainScope.annotation.height / 4 + 'px';
-            } else {
-                newAnnotation.style.padding = 0;
-            }
-
-            editableScreen.appendChild(newAnnotation);
+            addAnnotationToScreen(
+                $mainScope.annotations.length,
+                $mainScope.annotation.y,
+                $mainScope.annotation.x,
+                $mainScope.annotation.width,
+                $mainScope.annotation.height,
+                $mainScope.annotation.backGround,
+                $mainScope.annotation.color,
+                $mainScope.annotation.fontSize,
+                $mainScope.annotation.transparency,
+                $mainScope.annotation.text,
+                $mainScope.annotation.form
+            );
 
             var annotationClone = cloneObj($mainScope.annotation);
             $mainScope.annotations.push(annotationClone);
@@ -274,6 +349,33 @@
                 console.error(e.error.message);
             });
         }
+    }
+
+    function addAnnotationToScreen(id, top, left, width, height, background, color, fontSize, transparency, text, form){
+        var editableScreen = document.getElementById('editableScreen');
+        var newAnnotation = document.createElement('div');
+
+        newAnnotation.className = 'annotation';
+        newAnnotation.dataset.id = id;
+        newAnnotation.style.position = 'absolute';
+        newAnnotation.style.top = top + 'px';
+        newAnnotation.style.left = left + 'px';
+        newAnnotation.style.width = width + 'px';
+        newAnnotation.style.height = height + 'px';
+        newAnnotation.style.background = '#' + background;
+        newAnnotation.style.color = '#' + color;
+        newAnnotation.style.fontSize = fontSize;
+        newAnnotation.style.opacity = 1 - transparency / 100;
+        newAnnotation.innerHTML = text;
+
+        if (form == 'ellipse') {
+            newAnnotation.style.borderRadius = '100%';
+            newAnnotation.style.padding = height / 4 + 'px';
+        } else {
+            newAnnotation.style.padding = 0;
+        }
+
+        editableScreen.appendChild(newAnnotation);
     }
 
     function getDefaultAnnotation(){

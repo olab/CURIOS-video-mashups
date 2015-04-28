@@ -87,9 +87,7 @@ input:-webkit-autofill {
 .step-second .label-column{
     width: 70px;
 }
-.step-three .btn-gray{
-    margin-right: -4px;
-}
+
 .step-three .label-column{
     width: 165px;
 }
@@ -105,11 +103,17 @@ input:-webkit-autofill {
 .step-fifth .btn-gray{
     margin-left: -5px;
 }
+.step-profiles-status,
+.step-add-profile,
+.step-profile,
 .step-login{
     position: relative;
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.step-profiles-status .btn-green,
+.step-add-profile .btn-green,
+.step-profile .btn-green,
 .step-login .btn-green{
     position: absolute;
     right: 0;
@@ -246,6 +250,10 @@ input:-webkit-autofill {
 #audioFile{
     display: none;
 }
+#btn-upload,
+#btn-snippet,
+#btn-create-user,
+#btn-cabinet,
 #btn-reload,
 #btn-logout{
     display: inline-block;
@@ -255,8 +263,17 @@ input:-webkit-autofill {
     padding: 0 15px 3px 10px;
     float: right;
 }
+#btn-upload,
+#btn-create-user,
+#btn-cabinet,
 #btn-reload{
     margin-right: 15px;
+}
+#btn-upload{
+    background: transparent;
+    font-family: "Open Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 400;
 }
 #audioFileLoader{
     display: none;
@@ -272,4 +289,35 @@ input:-webkit-autofill {
 .annotation-action-bl{
     position: relative;
     bottom: -15px;
+}
+#user-name{
+    width: 169px;
+}
+.profiles-column{
+    display: inline-block;
+    width: 200px;
+}
+[id^=ps-author],
+[id^=ps-super]{
+    display: none;
+}
+
+[id^=ps-author]:checked + label,
+[id^=ps-super]:checked + label{
+    background: #9ec32e;
+    color: white;
+}
+.profile-delete{
+    margin-left: 100px;
+}
+#upload-by-slug{
+    position: relative;
+    display: inline-block;
+    float: right;
+}
+#upload-by-slug > input{
+    position: relative;
+    height: 38px;
+    width: 200px;
+    top: -1px;
 }

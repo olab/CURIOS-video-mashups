@@ -4,12 +4,14 @@
         {{HTML::style('css/snippet.css')}}
     </head>
     <body>
-        @if($errors->any())
-            <h4>{{$errors->first()}}</h4>
-        @endif
-        <h1>CURIOS video mashup service</h1>
+        <h1>
+            CURIOS video mashup service
+        </h1>
 
         <div class="body-bl">
+            @if($errors->any())
+                <h4>{{$errors->first()}}</h4>
+            @endif
             <div class="step step-login">
                 {{Form::open(['route' => 'session.store'])}}
                     <div class="setting-row">

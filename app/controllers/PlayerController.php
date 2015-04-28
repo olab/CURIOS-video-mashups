@@ -135,4 +135,69 @@ class PlayerController extends \BaseController
             exit(json_encode('file not exist'));
         }
     }
+
+    public function cabinet()
+    {
+        $users = DB::table('users')->get();
+        return View::make('player.cabinet.index')
+            ->with('users', $users);
+    }
+
+    public function updateProfile(){
+        $user = Auth::user();
+        return $this->saveProfile($user, URL::previous());
+    }
+
+    public function createProfile(){
+        $user = new User();
+        return $this->saveProfile($user, URL::previous());
+    }
+
+    public function saveProfile($user, $action)
+    {
+        $email = Input::get('user-name');
+        $newPassword = Input::get('password');
+        $newPasswordSubmit = Input::get('password-submit');
+        $status = Input::get('status', 'superuser');
+        $message = 'Wrong password submitted!';
+
+        if ($newPassword == $newPasswordSubmit) {
+            $user->email = $email;
+            $user->password = Hash::make($newPassword);
+            $user->status = $status;
+            $user->save();
+            $message = 'Done!';
+        }
+
+        return Redirect::to($action)->withInput()->withErrors([$message]);
+    }
+
+    public function createProfileView()
+    {
+        return View::make('player.cabinet.create');
+    }
+
+    public function editStatusProfiles()
+    {
+        $deleteId = Input::get('delete-user');
+        if ($deleteId) {
+            $user = User::find($deleteId);
+            $user->delete();
+        } else {
+            $statuses = Input::get('status');
+            foreach($statuses as $id => $status){
+                $user = User::find($id);
+                $user->status = $status;
+                $user->save();
+            }
+        }
+
+        return Redirect::back()->withErrors(['Done!']);
+    }
+
+    public function upload()
+    {
+        $slug = Input::get('slug');
+        print_r($slug); die;
+    }
 }

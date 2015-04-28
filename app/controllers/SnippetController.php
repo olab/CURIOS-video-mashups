@@ -99,4 +99,21 @@ class SnippetController extends \BaseController
                 'annotationsJSON' => json_encode($annotationsObj)
             ));
     }
+
+    public function uploadBySlug()
+    {
+        $result = array();
+        $videoId = VideoSettings::getIdBySlug(Input::get('slug'));
+        $videoObj = VideoSettings::find($videoId);
+
+        if ($videoObj) {
+            $result['playerInfo'] = $videoObj;
+            $result['audioInfo'] = AudioSettings::getAudioByVideoId($videoId);
+            $result['annotationInfo'] = VideoAnnotation::getAnnotationByVideoId($videoId);
+        } else {
+            $result['error'] = 'Wrong slug';
+        }
+
+        exit(json_encode($result));
+    }
 }

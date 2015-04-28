@@ -26,4 +26,9 @@ class VideoSettings extends Eloquent {
             'volume'          => $volume
         ]);
     }
+
+    public static function getIdBySlug($slug)
+    {
+        return base64_decode($slug);
+    }
 }
