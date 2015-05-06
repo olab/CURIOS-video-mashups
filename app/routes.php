@@ -32,7 +32,8 @@ Route::post('player/editStatusProfiles', 'PlayerController@editStatusProfiles')
 Route::post('player/upload', 'PlayerController@upload')
     ->before('auth');
 
-Route::get('snippet', 'SnippetController@create')
+Route::any('snippet', 'SnippetController@create')
+    ->before('lti')
     ->before('auth');
 Route::post('player/ajaxUploadAudio', 'SnippetController@ajaxUploadAudio')
     ->before('auth');
@@ -42,12 +43,18 @@ Route::get('player/embed', 'SnippetController@embed');
 Route::post('player/uploadBySlug', 'SnippetController@uploadBySlug')
     ->before('auth');
 
+Route::get('lti', 'LtiController@index')
+    ->before('auth');
+Route::get('/lti/show/{id}', 'LtiController@show')
+    ->before('auth');
+Route::post('/lti/insert-or-update', 'LtiController@insertOrUpdate')
+    ->before('auth');
+Route::get('/lti/remove/{id}', 'LtiController@remove')
+    ->before('auth');
+Route::get('/lti/create', 'LtiController@create')
+    ->before('auth');
+
 Route::get('/', 'SessionController@create');
 Route::get('login', 'SessionController@create');
 Route::get('logout', 'SessionController@destroy');
 Route::resource('session', 'SessionController');
-
-//Route::get('/', function()
-//{
-//	return View::make('hello');
-//});

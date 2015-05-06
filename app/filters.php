@@ -13,7 +13,7 @@
 
 App::before(function($request)
 {
-	//
+    //
 });
 
 
@@ -32,6 +32,24 @@ App::after(function($request, $response)
 | integrates HTTP Basic authentication for quick, simple checking.
 |
 */
+
+Route::filter('lti', function(){
+    if (!empty($_POST['lti_message_type'])){
+        require_once 'models/LTI_Tool_Provider.php';
+        require_once 'models/LTI_Data_Connector_pdo.php';
+
+        $pdo = DB::connection('mysql')->getPdo();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+        $dataConnector = new LTI_Data_Connector_PDO($pdo);
+        $tool = new LTI_Tool_Provider($dataConnector, 'self::lti_do_connect');
+        $tool->handle_request();
+        if(!$tool->isOK) die;
+
+        if(!empty($tool->login_user)) {
+            Auth::login($tool->login_user);
+        }
+    }
+});
 
 Route::filter('auth', function()
 {
