@@ -13,8 +13,10 @@
             CURIOS video mashup service
             <a href="{{URL::to('/logout')}}" id="btn-logout">Logout</a>
             <a href="{{URL::to('/snippet')}}" id="btn-reload">Create new snippet</a>
+            @if(Auth::user()->status == 'superuser')
             <a href="{{URL::to('/player/cabinet')}}" id="btn-cabinet">Cabinet</a>
             <a href="{{URL::to('/lti')}}" id="btn-cabinet">LTI</a>
+            @endif
             <span id="upload-by-slug">
                 <input type="text" ng-model="slugToUpload">
                 <button id="btn-upload" ng-click="uploadBySlug()">Upload by slug</button>
