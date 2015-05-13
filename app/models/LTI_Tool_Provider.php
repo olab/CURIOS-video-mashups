@@ -56,7 +56,8 @@ use Illuminate\Support\Facades\Auth;
 /**
  * OAuth library file
  */
-require_once('OAuth.php');
+
+//require_once('OAuth.php');
 
 /**
  * Class to represent an LTI Tool Provider
