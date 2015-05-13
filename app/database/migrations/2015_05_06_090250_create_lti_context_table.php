@@ -31,7 +31,7 @@ class CreateLtiContextTable extends Migration {
             $table->string('primary_context_id', 255)->nullable()->default(NULL);
             $table->index(array('primary_consumer_key', 'primary_context_id'));
 
-            $table->tinyInteger('share_approved', 1)->nullable()->default(NULL);
+            $table->tinyInteger('share_approved')->nullable()->default(NULL);
 
             $table->dateTime('created');
             $table->dateTime('updated');

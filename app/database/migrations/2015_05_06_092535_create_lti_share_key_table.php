@@ -22,7 +22,7 @@ class CreateLtiShareKeyTable extends Migration {
             $table->string('primary_consumer_key', 255);
             $table->string('primary_context_id', 255);
 
-            $table->tinyInteger('auto_approve', 1);
+            $table->tinyInteger('auto_approve');
 
             $table->dateTime('expires');
 

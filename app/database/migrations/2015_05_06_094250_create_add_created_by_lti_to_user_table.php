@@ -15,7 +15,7 @@ class CreateAddCreatedByLtiToUserTable extends Migration {
     {
         Schema::table($this->tableName, function(Blueprint $table)
         {
-            $table->tinyInteger('created_by_lti', 1);
+            $table->tinyInteger('created_by_lti');
         });
     }
 

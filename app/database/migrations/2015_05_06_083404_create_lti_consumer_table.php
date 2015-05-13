@@ -27,8 +27,8 @@ class CreateLtiConsumerTable extends Migration {
             $table->string('consumer_guid', 255)->nullable()->default(NULL);
             $table->string('css_path', 255)->nullable()->default(NULL);
 
-            $table->tinyInteger('protected', 1);
-            $table->tinyInteger('enabled', 1);
+            $table->tinyInteger('protected');
+            $table->tinyInteger('enabled');
 
             $table->dateTime('enable_from')->nullable()->default(NULL);
             $table->dateTime('enable_until')->nullable()->default(NULL);
