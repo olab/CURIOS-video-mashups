@@ -13,7 +13,6 @@ class CreateLtiContextTable extends Migration {
      */
     public function up()
     {
-        Schema::dropIfExists($this->tableName);
         Schema::create($this->tableName, function(Blueprint $table)
         {
             $table->engine = 'InnoDB';
