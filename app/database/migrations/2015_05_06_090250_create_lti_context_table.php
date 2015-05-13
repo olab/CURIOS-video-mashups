@@ -17,8 +17,8 @@ class CreateLtiContextTable extends Migration {
         {
             $table->engine = 'InnoDB';
 
-            $table->string('consumer_key', 255)->primary();
-            $table->string('context_id', 255)->primary();
+            $table->string('consumer_key', 255);
+            $table->string('context_id', 255);
 
             $table->string('lti_context_id', 255)->nullable()->default(NULL);
             $table->string('lti_resource_id', 255)->nullable()->default(NULL);
@@ -35,6 +35,8 @@ class CreateLtiContextTable extends Migration {
 
             $table->dateTime('created');
             $table->dateTime('updated');
+
+            $table->primary(array('consumer_key', 'context_id'));
 
             $table->foreign('consumer_key')->references('consumer_key')->on('lti_consumer');
             $table->foreign(array('primary_consumer_key', 'primary_context_id'))->references(array('consumer_key', 'context_id'))->on('lti_context');
