@@ -15,7 +15,7 @@ class CreateLtiContextTable extends Migration {
     {
         Schema::create($this->tableName, function(Blueprint $table)
         {
-            $table->engine = 'InnoDB';
+            /*$table->engine = 'InnoDB';
 
             $table->string('consumer_key', 255);
             $table->string('context_id', 255);
@@ -34,7 +34,7 @@ class CreateLtiContextTable extends Migration {
             $table->tinyInteger('share_approved')->nullable()->default(NULL);
 
             $table->dateTime('created');
-            $table->dateTime('updated');
+            $table->dateTime('updated');*/
 
             $table->primary(array('consumer_key', 'context_id'));
 
