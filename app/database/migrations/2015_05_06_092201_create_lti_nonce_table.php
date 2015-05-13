@@ -17,10 +17,12 @@ class CreateLtiNonceTable extends Migration {
         {
             $table->engine = 'InnoDB';
 
-            $table->string('consumer_key', 255)->primary();
-            $table->string('value', 32)->primary();
+            $table->string('consumer_key', 255);
+            $table->string('value', 32);
 
             $table->dateTime('expires');
+
+            $table->primary(array('consumer_key', 'value'));
 
             $table->foreign('consumer_key')->references('consumer_key')->on('lti_consumer');
         });

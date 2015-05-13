@@ -17,14 +17,16 @@ class CreateLtiUserTable extends Migration {
         {
             $table->engine = 'InnoDB';
 
-            $table->string('consumer_key', 255)->primary();
-            $table->string('context_id', 255)->primary();
-            $table->string('user_id', 255)->primary();
+            $table->string('consumer_key', 255);
+            $table->string('context_id', 255);
+            $table->string('user_id', 255);
 
             $table->string('lti_result_sourcedid', 255);
 
             $table->dateTime('created');
             $table->dateTime('updated');
+
+            $table->primary(array('consumer_key', 'context_id', 'user_id'));
 
             $table->foreign(array('consumer_key', 'context_id'))->references(array('consumer_key', 'context_id'))->on('lti_context');
 
