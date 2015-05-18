@@ -9,11 +9,12 @@
     {{HTML::style('css/common.css')}}
 </head>
 <body>
-<h1>
-    CURIOS video mashup service | Cabinet
-    <a href="{{URL::to('/snippet')}}" id="btn-snippet">To snippet</a>
-    <a href="{{URL::to('/player/createProfileView')}}" id="btn-create-user">Create new user</a>
-</h1>
+<div class="top-menu">
+    Cabinet
+    <a href="{{URL::to('/snippet')}}" class="btn" id="btn-snippet">To snippet</a>
+    <a href="{{URL::to('/player/createProfileView')}}" class="btn" id="btn-create-user">Create new user</a>
+    <div class="clear"></div>
+</div>
 
 <div class="body-bl">
     @if($errors->any())

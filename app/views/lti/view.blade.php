@@ -9,11 +9,12 @@
     {{HTML::style('css/jquery-ui.min.css')}}
 </head>
 <body>
-<h1>
-    CURIOS video mashup service | LTI Manager > Create new consumer
-    <a href="{{URL::to('/snippet')}}" id="btn-snippet">To snippet</a>
-    <a href="{{URL::to('/lti')}}" id="btn-create-user">To LTI Manager</a>
-</h1>
+<div class="top-menu">
+    LTI Manager > Create new consumer
+    <a href="{{URL::to('/snippet')}}" class="btn" id="btn-snippet">To snippet</a>
+    <a href="{{URL::to('/lti')}}" class="btn" id="btn-create-user">To LTI Manager</a>
+    <div class="clear"></div>
+</div>
 
 <div class="body-bl">
     @if($errors->any())

@@ -1,5 +1,5 @@
 body{
-    margin: 50px 40px;
+    margin: 35px 25px;
     background-color: #b8b8b8;
 }
 
@@ -12,6 +12,17 @@ h1{
     font-size: 24px;
     font-weight: 400;
 }
+
+.top-menu{
+    background-color: #330a38;
+    color: white;
+    padding: 20px 30px;
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    font-size:15px;
+}
+
 select,
 input[type="text"],
 input[type="email"],
@@ -29,6 +40,11 @@ input[type="text"] {
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px white inset;
 }
+
+.clear{
+    clear:both;
+}
+
 .body-bl{
     background-color: #dfdddd;
     padding: 15px 30px;
@@ -74,7 +90,8 @@ input:-webkit-autofill {
 .left-column{
     vertical-align: top;
     display: inline-block;
-    width: 65%;
+    width: 50%;
+    min-width: 500px;
 }
 .step-second{
     padding-top: 10px;
@@ -136,11 +153,11 @@ input:-webkit-autofill {
     border: 0;
     height: 30px;
     top: 10px;
-    left: 170px;
-    padding-left: 15px;
-    width: 79%;
+    left: 140px;
+    padding-left: 10px;
+    width: 58%;
     font-family: "Open Sans", sans-serif;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 400;
 }
 
@@ -250,17 +267,22 @@ input:-webkit-autofill {
 #audioFile{
     display: none;
 }
+
+.btn{
+    display: inline-block;
+    color: white;
+    border: 1px solid white;
+    text-decoration: none;
+    padding: 0 15px 3px 10px;
+    cursor:pointer;
+}
+
 #btn-upload,
 #btn-snippet,
 #btn-create-user,
 #btn-cabinet,
 #btn-reload,
 #btn-logout{
-    display: inline-block;
-    color: white;
-    border: 1px solid white;
-    text-decoration: none;
-    padding: 0 15px 3px 10px;
     float: right;
 }
 #btn-upload,
@@ -272,8 +294,8 @@ input:-webkit-autofill {
 #btn-upload{
     background: transparent;
     font-family: "Open Sans", sans-serif;
-    font-size: 24px;
-    font-weight: 400;
+    font-size: 15px;
+    /*padding: 3px 15px 2px 10px;*/
 }
 #audioFileLoader{
     display: none;
@@ -317,7 +339,8 @@ input:-webkit-autofill {
 }
 #upload-by-slug > input{
     position: relative;
-    height: 38px;
-    width: 200px;
-    top: -1px;
+    height: 25px;
+    width: 70px;
+    font-size:15px;
+    /*top: -1px;*/
 }

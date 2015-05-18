@@ -54,6 +54,8 @@ Route::get('/lti/remove/{id}', 'LtiController@remove')
 Route::get('/lti/create', 'LtiController@create')
     ->before('auth');
 
+Route::get('/about', 'PageController@about');
+
 Route::get('/', 'SessionController@create');
 Route::get('login', 'SessionController@create');
 Route::get('logout', 'SessionController@destroy');

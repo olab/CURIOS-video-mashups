@@ -9,19 +9,20 @@
         {{HTML::style('css/common.css')}}
     </head>
     <body ng-controller="Main">
-        <h1>
-            CURIOS video mashup service
-            <a href="{{URL::to('/logout')}}" id="btn-logout">Logout</a>
-            <a href="{{URL::to('/snippet')}}" id="btn-reload">Create new snippet</a>
+        <div class="top-menu">
+            <a href="{{URL::to('/about')}}" class="btn">About</a>
+            <a href="{{URL::to('/logout')}}" id="btn-logout" class="btn">Logout</a>
             @if(Auth::user()->status == 'superuser')
-            <a href="{{URL::to('/player/cabinet')}}" id="btn-cabinet">Cabinet</a>
-            <a href="{{URL::to('/lti')}}" id="btn-cabinet">LTI</a>
+            <a href="{{URL::to('/player/cabinet')}}" id="btn-cabinet" class="btn">Cabinet</a>
+            <a href="{{URL::to('/lti')}}" id="btn-cabinet" class="btn">LTI</a>
             @endif
+            <a href="{{URL::to('/snippet')}}" id="btn-reload" class="btn">New</a>
             <span id="upload-by-slug">
                 <input type="text" ng-model="slugToUpload">
-                <button id="btn-upload" ng-click="uploadBySlug()">Upload by slug</button>
+                <button id="btn-upload" class="btn" ng-click="uploadBySlug()">Retrieve</button>
             </span>
-        </h1>
+            <div class="clear"></div>
+        </div>
 
         <div class="body-bl">
 

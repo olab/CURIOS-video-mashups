@@ -8,11 +8,12 @@
     {{HTML::style('css/common.css')}}
 </head>
 <body>
-<h1>
-    CURIOS video mashup service | LTI Manager
-    <a href="{{URL::to('/snippet')}}" id="btn-snippet">To snippet</a>
-    <a href="{{URL::to('/lti/create')}}" id="btn-create-user">Create new consumer</a>
-</h1>
+<div class="top-menu">
+    LTI Manager
+    <a href="{{URL::to('/snippet')}}" class="btn" id="btn-snippet">To snippet</a>
+    <a href="{{URL::to('/lti/create')}}" class="btn" id="btn-create-user">Create new consumer</a>
+    <div class="clear"></div>
+</div>
 
 <div class="body-bl">
     @if($errors->any())
@@ -41,9 +42,9 @@
             <td>{{$consumer->enable_until}}</td>
             <td>
                 <div class="btn-group">
-                    <a class="btn btn-info" href="{{URL::to('/lti/show/'.$consumer->consumer_key)}}">Edit</a>
+                    <a href="{{URL::to('/lti/show/'.$consumer->consumer_key)}}">Edit</a>
                     or
-                    <a href="{{URL::to('/lti/remove/'.$consumer->consumer_key)}}" class="btn btn-danger remove">Delete</a>
+                    <a href="{{URL::to('/lti/remove/'.$consumer->consumer_key)}}">Delete</a>
                 </div>
             </td>
         </tr>
