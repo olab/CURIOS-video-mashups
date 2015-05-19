@@ -20,7 +20,10 @@ class AudioSettings extends Eloquent {
     public static function deleteEntry($id)
     {
         $audio = AudioSettings::find($id);
-        unlink(public_path().$audio->path);
+        $audioName = public_path().'/audio/'.$audio->path;
+        if(file_exists($audioName)) {
+            unlink($audioName);
+        }
         $audio->delete();
     }
 
@@ -30,9 +33,14 @@ class AudioSettings extends Eloquent {
         $videoAudioObj = VideoAudio::where('video_id', '=', $videoId)->first();
 
         if ($videoAudioObj) {
-            $result = AudioSettings::find($videoAudioObj->audio_id);
+            $result = self::find($videoAudioObj->audio_id);
         }
 
         return $result;
+    }
+
+    public static function getByPath($path)
+    {
+        return self::where('path', '=', $path);
     }
 }

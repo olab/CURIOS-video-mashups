@@ -11,7 +11,7 @@
         <button class="btn-gray" ng-click="clickAudioFile()">Choose and upload file</button>
         <input type="file" id="audioFile">
         <div id="audioFileLoader"></div>
-        <div ng-model="audio.note" class="audio-note">@{{ audio.note }}</div>
+        <div ng-model="audio.note" class="audio-note" id="audio-note">@{{ audio.note }}</div>
         <audio ng-show="audio.uploaded" id="audioFileUploaded" controls>
             <source id="srcToMp3" src="" type="audio/mpeg">
         </audio>

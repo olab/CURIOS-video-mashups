@@ -20,15 +20,7 @@
             volume: 100
         };
         $scope.playerApi = {};
-        $scope.audio = {
-            path: '',
-            exist: '',
-            start: {h: 0, m: 0, s: 0},
-            end: {h: 0, m: 0, s: 0},
-            volume: 100,
-            note: '',
-            uploaded: 0
-        };
+        $scope.audio = getDefaultAudio();
         $scope.annotation = getDefaultAnnotation();
         $scope.annotationExist = '';
         $scope.annotationForDelete = false;
@@ -122,6 +114,7 @@
                         $scope.audio.path = src;
                         $scope.audio.volume = data.volume;
                         $scope.audio.exist = 'yes';
+                        $scope.audio.id = data.id;
 
                         var srcToMp3 = document.getElementById('srcToMp3');
                         srcToMp3.src = src;
@@ -153,19 +146,32 @@
                             data[i].text,
                             data[i].form
                         );
+                        $scope.annotations.push(data[i]);
                     }
-                    $scope.annotations.push(data[i]);
                 }
 
                 if (data.error){
                     $scope.slugToUpload = data.error;
                 } else {
+                    var uploadBySlugDiv = document.getElementById('upload-by-slug');
+                    uploadBySlugDiv.innerText = '';
+
                     setVideo(data.playerInfo, slug);
                     setAudio(data.audioInfo);
                     setAnnotation(data.annotationInfo);
+                    var generateBtn = document.getElementById('btn-generate'),
+                        generateBtnText = 'Save changes & show code',
+                        role = document.getElementById('user-role').value;
+
+                    if(role == 'author'){
+                        generateBtnText = 'Save changes & generate code with new slug';
+                    }
+                    generateBtn.innerText = generateBtnText;
 
                     $scope.stepNum = 5;
                 }
+            }).error(function(e){
+                console.log(e);
             });
         }
     }
@@ -193,13 +199,18 @@
     }
 
     function ThirdStep($scope, $http){
-        var $mainScope = $scope.$parent;
+        var $mainScope = $scope.$parent,
+            audioSource = document.getElementById('srcToMp3'),
+            audioNote = document.getElementById('audio-note');
 
         $scope.toFourthStep = function(){
-            $mainScope.stepNum = 4;
+            $mainScope.stepNum = ($mainScope.stepNum < 4) ? 4 : $mainScope.stepNum;
 
             if ($mainScope.audio.exist == 'no') {
-                console.log('reset audio form, when click no');
+                audioSource.src = '';
+                audioNote.innerText = '';
+                $scope.audio = getDefaultAudio();
+                $mainScope.audio = getDefaultAudio();
             }
         };
 
@@ -224,7 +235,7 @@
                 request.onload = function () {
                     data = angular.fromJson(request.response);
                     $mainScope.audio.path = data.src;
-                    $mainScope.audio.note = file.name;
+                    $mainScope.audio.note = data.fileName;
 
                     var srcToMp3 = document.getElementById('srcToMp3');
                     srcToMp3.src = data.src;
@@ -294,7 +305,7 @@
 
         $scope.deleteAnnotation = function(){
             var removeId = $mainScope.annotationForDelete.dataset.id;
-            $mainScope.annotations[removeId].save = false;
+            $mainScope.annotations[removeId].action = 'delete';
             $mainScope.annotationForDelete.remove();
             $mainScope.annotationForDelete = false;
         };
@@ -337,6 +348,9 @@
                 annotations: $mainScope.annotations
             };
 
+            var uploadBySlugDiv = document.getElementById('upload-by-slug');
+            uploadBySlugDiv.innerText = '';
+
             $http.post('player/generate', {
                 json: angular.toJson($allData)
             }).success(function(data){
@@ -346,7 +360,7 @@
                 document.getElementById('resultCode').innerHTML =
                     '<embed src="' + baseUrl + '/player/embed?slug=' + data.idBase64 + '" width="480px" height="360px"></embed>';
             }).error(function(e){
-                console.error(e.error.message);
+                console.log(e);
             });
         }
     }
@@ -364,7 +378,7 @@
         newAnnotation.style.height = height + 'px';
         newAnnotation.style.background = '#' + background;
         newAnnotation.style.color = '#' + color;
-        newAnnotation.style.fontSize = fontSize;
+        newAnnotation.style.fontSize = fontSize + 'px';
         newAnnotation.style.opacity = 1 - transparency / 100;
         newAnnotation.innerHTML = text;
 
@@ -378,10 +392,23 @@
         editableScreen.appendChild(newAnnotation);
     }
 
+    function getDefaultAudio(){
+        return {
+            id: '',
+            path: '',
+            exist: '',
+            start: {h: 0, m: 0, s: 0},
+            end: {h: 0, m: 0, s: 0},
+            volume: 100,
+            note: '',
+            uploaded: 0
+        }
+    }
+
     function getDefaultAnnotation(){
         return {
             form: 'rectangle',
-            save: true,
+            action: 'insert',
             backGround: '000000',
             x: 0,
             y: 0,
@@ -431,7 +458,7 @@
             $mainScope.annotation.y = parseInt(focusedPopup.style.top);
             $mainScope.annotation.width = parseInt(focusedPopup.style.width);
             $mainScope.annotation.height = parseInt(focusedPopup.style.height);
-            $mainScope.annotation.backGround = rgb2hex(focusedPopup.style.background);
+            $mainScope.annotation.backGround = rgb2hex(focusedPopup.style.backgroundColor);
             $mainScope.annotation.color = rgb2hex(focusedPopup.style.color);
             $mainScope.annotation.fontSize = focusedPopup.style.fontSize;
             $mainScope.annotation.transparency = (1 - focusedPopup.style.opacity) * 100;

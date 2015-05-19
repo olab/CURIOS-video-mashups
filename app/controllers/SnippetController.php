@@ -11,18 +11,20 @@ class SnippetController extends \BaseController
     {
         $audio  = Input::file('file');
         $srcUrl = '';
+        $audioName = '';
 
         if ($audio) {
             $destinationPath = public_path() . DIRECTORY_SEPARATOR . 'audio' . DIRECTORY_SEPARATOR;
-            $audioName = $audio->getClientOriginalName();
+            $audioName = time() . '_' .$audio->getClientOriginalName();
             $audio->move($destinationPath, $audioName);
             $src = '/audio/' . $audioName;
             $srcUrl = asset($src);
         }
 
-        exit(json_encode(array('src' => $srcUrl)));
+        exit(json_encode(array('src' => $srcUrl, 'fileName' => $audioName)));
     }
 
+    //when authors try to update snippet - always create new one
     public function generate()
     {
         $allData        = json_decode(Input::get('json'));
@@ -33,43 +35,80 @@ class SnippetController extends \BaseController
         // save youtube video
         $videoStart = $this->objToTime($player->start);
         $videoEnd = $this->objToTime($player->end);
-        if($player->id){
+        $role = $email = Auth::user()->status;
+        if($player->id && $role == 'superuser'){
             $videoId = $player->id;
             VideoSettings::updateEntry($videoId, $player->videoCode, $videoStart, $videoEnd, $player->volume);
         } else {
             $videoId = VideoSettings::createEntry($player->videoCode, $videoStart, $videoEnd, $player->volume);
+            UserVideo::create([
+                'user_id' => Auth::id(),
+                'video_id' => $videoId
+            ]);
         }
-
-        UserVideo::create([
-            'user_id' => Auth::id(),
-            'video_id' => $videoId
-        ]);
 
         //save audio
-        if ($audio->path){
+        $audioPath = $audio->path;
+        if (!empty($audioPath)){
             $audioStart = $this->objToTime($audio->start);
             $audioEnd = $this->objToTime($audio->end);
-            $audioId = AudioSettings::createEntry($audio->note, $audioStart, $audioEnd, $audio->volume);
 
-            VideoAudio::create([
-                'video_id' => $videoId,
-                'audio_id' => $audioId,
-            ]);
+            $audioId = $audio->id;
+            if(empty($audioId) || (!empty($audioId) && $role == 'author')) {
+                //insert
+                $audioId = AudioSettings::createEntry($audio->note, $audioStart, $audioEnd, $audio->volume);
+                VideoAudio::create([
+                    'video_id' => $videoId,
+                    'audio_id' => $audioId,
+                ]);
+            }else{
+                //update
+                $audioObj = AudioSettings::find($audioId);
+                $audioObj->path = $audio->note;
+                $audioObj->start_time = $audioStart;
+                $audioObj->end_time = $audioEnd;
+                $audioObj->volume = $audio->volume;
+                $audioObj->save();
+            }
+        }elseif($role == 'superuser'){
+            //delete
+            $videoAudioCollection = VideoAudio::where('video_id', '=', $videoId)->get();
+            if(count($videoAudioCollection) > 0){
+                foreach($videoAudioCollection as $videoAudioObj){
+                    $path = AudioSettings::find($videoAudioObj->audio_id)->path;
+                    $file_usages = AudioSettings::getByPath($path)->get();
+                    if(!empty($file_usages) && count($file_usages) > 1) {
+                        AudioSettings::find($videoAudioObj->audio_id)->delete();
+                    }else{
+                        AudioSettings::deleteEntry($videoAudioObj->audio_id);
+                    }
+                    $videoAudioObj->delete();
+                }
+            }
         }
 
-        //save annotation
+        //save annotations
         foreach ($annotations as $annotation) {
-            if ( ! $annotation->save) continue;
+            if (!is_object($annotation) || empty($annotation)) continue;
+
             $annotationStart = $this->objToTime($annotation->start);
             $annotationEnd = $this->objToTime($annotation->end);
-            $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,
-                $annotation->height, $annotation->width, $annotationStart, $annotationEnd, $annotation->text,
-                $annotation->transparency, $annotation->fontSize, $annotation->color);
 
-            VideoAnnotation::create([
-                'video_id' => $videoId,
-                'annotation_id' => $annotationId
-            ]);
+            $action = isset($annotation->action) ? $annotation->action : false;
+
+            if($action == 'insert' || ($action == 'loaded' && $role == 'author')){
+                $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,
+                    $annotation->height, $annotation->width, $annotationStart, $annotationEnd, $annotation->text,
+                    $annotation->transparency, $annotation->fontSize, $annotation->color);
+
+                VideoAnnotation::create([
+                    'video_id' => $videoId,
+                    'annotation_id' => $annotationId
+                ]);
+            }elseif($action == 'delete' && $role == 'superuser' && isset($annotation->id)){
+                AnnotationSetting::find($annotation->id)->delete();
+                VideoAnnotation::where('video_id', '=', $videoId)->andWhere('annotation_id', '=', $annotation->id)->delete();
+            }
         }
 
         exit(json_encode(['id' => $videoId, 'idBase64' =>base64_encode($videoId)]));
@@ -83,6 +122,14 @@ class SnippetController extends \BaseController
         return (($obj->h * 60) + $obj->m) * 60 + $obj->s;
     }
 
+    private function timeToObj($time){
+        $obj = new stdClass();
+        $date = explode(':', gmdate('G:i:s', $time));
+        $obj->h = (int)$date[0];
+        $obj->m = (int)$date[1];
+        $obj->s = (int)$date[2];
+        return $obj;
+    }
 
     public function embed()
     {
@@ -109,7 +156,17 @@ class SnippetController extends \BaseController
         if ($videoObj) {
             $result['playerInfo'] = $videoObj;
             $result['audioInfo'] = AudioSettings::getAudioByVideoId($videoId);
-            $result['annotationInfo'] = VideoAnnotation::getAnnotationByVideoId($videoId);
+            $result['annotationInfo'] = [];
+
+            $annotationInfo = VideoAnnotation::getAnnotationByVideoId($videoId);
+            if(!empty($annotationInfo)) {
+                foreach ($annotationInfo as $annotation) {
+                    $annotation->start = $this->timeToObj($annotation->start_time);
+                    $annotation->end = $this->timeToObj($annotation->end_time);
+                    $annotation->action = 'loaded';
+                    $result['annotationInfo'][] = $annotation;
+                }
+            }
         } else {
             $result['error'] = 'Wrong slug';
         }

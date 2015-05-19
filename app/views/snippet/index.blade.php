@@ -9,6 +9,9 @@
         {{HTML::style('css/common.css')}}
     </head>
     <body ng-controller="Main">
+
+        <input type="hidden" value="{{Auth::user()->status}}" id="user-role">
+
         <div class="top-menu">
             <a href="{{URL::to('/about')}}" class="btn">About</a>
             <a href="{{URL::to('/logout')}}" id="btn-logout" class="btn">Logout</a>
