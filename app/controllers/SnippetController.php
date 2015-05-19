@@ -78,7 +78,7 @@ class SnippetController extends \BaseController
                     $path = AudioSettings::find($videoAudioObj->audio_id)->path;
                     $file_usages = AudioSettings::getByPath($path)->get();
                     if(!empty($file_usages) && count($file_usages) > 1) {
-                        AudioSettings::find($videoAudioObj->audio_id)->delete();
+                        AudioSettings::destroy($videoAudioObj->audio_id);
                     }else{
                         AudioSettings::deleteEntry($videoAudioObj->audio_id);
                     }
@@ -106,8 +106,8 @@ class SnippetController extends \BaseController
                     'annotation_id' => $annotationId
                 ]);
             }elseif($action == 'delete' && $role == 'superuser' && isset($annotation->id)){
-                AnnotationSetting::find($annotation->id)->delete();
-                VideoAnnotation::where('video_id', '=', $videoId)->andWhere('annotation_id', '=', $annotation->id)->delete();
+                AnnotationSetting::destroy($annotation->id);
+                VideoAnnotation::where(['video_id' => $videoId, 'annotation_id' => $annotation->id])->delete();
             }
         }
 
