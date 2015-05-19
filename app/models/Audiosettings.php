@@ -20,11 +20,13 @@ class AudioSettings extends Eloquent {
     public static function deleteEntry($id)
     {
         $audio = AudioSettings::find($id);
-        $audioName = public_path().'/audio/'.$audio->path;
-        if(file_exists($audioName)) {
-            unlink($audioName);
+        if(!empty($audio)) {
+            $audioName = public_path() . '/audio/' . $audio->path;
+            if (file_exists($audioName)) {
+                unlink($audioName);
+            }
+            $audio->delete();
         }
-        $audio->delete();
     }
 
     public static function getAudioByVideoId($videoId)
