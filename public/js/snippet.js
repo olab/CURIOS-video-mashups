@@ -141,7 +141,7 @@
                             data[i].height,
                             data[i].backGround,
                             data[i].color,
-                            data[i].fontSize,
+                            data[i].fontSize + 'px',
                             data[i].transparency,
                             data[i].text,
                             data[i].form
@@ -378,7 +378,7 @@
         newAnnotation.style.height = height + 'px';
         newAnnotation.style.background = '#' + background;
         newAnnotation.style.color = '#' + color;
-        newAnnotation.style.fontSize = fontSize + 'px';
+        newAnnotation.style.fontSize = fontSize;
         newAnnotation.style.opacity = 1 - transparency / 100;
         newAnnotation.innerHTML = text;
 
