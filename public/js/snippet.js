@@ -9,7 +9,7 @@
         $scope.screenWidth = 480;
         $scope.screenHeight = 360;
         $scope.stepNum = 1;
-        $scope.slugToUpload = '==MQ';
+        $scope.slugToUpload = 'MQ==';
         $scope.player = {
             id: 0,
             idBase64: '',
