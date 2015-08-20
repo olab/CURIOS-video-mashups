@@ -133,7 +133,7 @@ class SnippetController extends \BaseController
 
     public function embed()
     {
-        $videoId = base64_decode(Input::get('slug'));
+        $videoId = VideoSettings::getIdBySlug(Input::get('slug'));
 
         $videoObj = VideoSettings::find($videoId);
         $audioObj = AudioSettings::getAudioByVideoId($videoId);
