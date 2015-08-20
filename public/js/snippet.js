@@ -373,6 +373,7 @@
             $http.post('player/generate', {
                 json: angular.toJson($allData)
             }).success(function(data){
+                console.log(data);
                 $mainScope.wasGenerated = true;
                 $mainScope.player.id = parseInt(data.id);
                 $mainScope.player.idBase64 = data.idBase64;
