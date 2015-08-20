@@ -32,6 +32,10 @@
                 audioStartTime = video.start_time + audio.start_time,
                 audioDelayConst = 0.5;
 
+            console.log(video.start_time);
+            console.log(audio.start_time);
+            console.log(audioStartTime);
+
             // function which run every second
             setInterval(function(){
                 previousVideoTime = currentVideoTime;
