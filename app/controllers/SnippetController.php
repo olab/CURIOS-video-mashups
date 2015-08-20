@@ -111,7 +111,7 @@ class SnippetController extends \BaseController
             }
         }
 
-        exit(json_encode(['id' => $videoId, 'idBase64' =>base64_encode($videoId)]));
+        exit(json_encode(['id' => $videoId, 'idBase64' =>VideoSettings::urlsafe_b64encode($videoId)]));
     }
 
     /**
