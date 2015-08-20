@@ -219,7 +219,9 @@
                 audioSource.src = '';
                 audioNote.innerText = '';
                 $scope.audio = getDefaultAudio();
+                $scope.audio.exist = 'no';
                 $mainScope.audio = getDefaultAudio();
+                $mainScope.audio.exist = 'no';
             }
         };
 
@@ -319,6 +321,8 @@
             $mainScope.annotations[removeId].action = 'delete';
             $mainScope.annotationForDelete.remove();
             $mainScope.annotationForDelete = false;
+            console.log($mainScope.annotations);
+            console.log(removeId);
         };
 
         $scope.toFifthStep = function(){
@@ -407,7 +411,7 @@
         return {
             id: '',
             path: '',
-            exist: 'no',
+            exist: '',
             start: {h: 0, m: 0, s: 0},
             end: {h: 0, m: 0, s: 0},
             volume: 100,
