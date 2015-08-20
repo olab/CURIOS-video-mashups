@@ -35,7 +35,7 @@ class SnippetController extends \BaseController
         // save youtube video
         $videoStart = $this->objToTime($player->start);
         $videoEnd = $this->objToTime($player->end);
-        $role = $email = Auth::user()->status;
+        $role = Auth::user()->status;
         if($player->id && $role == 'superuser'){
             $videoId = $player->id;
             VideoSettings::updateEntry($videoId, $player->videoCode, $videoStart, $videoEnd, $player->volume);
