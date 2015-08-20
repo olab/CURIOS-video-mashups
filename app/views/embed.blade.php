@@ -30,6 +30,7 @@
                 currentVideoTime = video.start_time,
                 previousVideoTime = 0,
                 audioStartTime = parseInt(video.start_time) + parseInt(audio.start_time),
+                audioEndTime = parseInt(video.start_time) + parseInt(audio.end_time),
                 audioDelayConst = 0.5;
 
             console.log(video.start_time);
@@ -48,9 +49,12 @@
                     console.log('manually change time');
                 }
 
-                if (currentVideoTime >= audioStartTime - audioDelayConst){
+                if (
+                        (currentVideoTime >= (audioStartTime - audioDelayConst)) &&
+                        (currentVideoTime <= (audioEndTime - audioDelayConst))
+                        ){
                     audioActive = true;
-                    if (videoIsPlayed && ! audioIsPlayed) {
+                    if (videoIsPlayed && !audioIsPlayed) {
                         player.setVolume(video.volume);
                         onAudioStateChange();
                     }
