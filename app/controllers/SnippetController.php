@@ -151,6 +151,7 @@ class SnippetController extends \BaseController
         die(json_encode([
             'id' => $videoId,
             'idBase64' => VideoSettings::urlsafe_b64encode($videoId),
+            'annot_ids' => $annotations_ids
         ]));
     }
 
