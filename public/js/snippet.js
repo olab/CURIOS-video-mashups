@@ -215,6 +215,7 @@
             console.log('toFourthStep');
             if ($mainScope.audio.exist == 'no') {
                 console.log('delete audio');
+                //TODO: delete uploaded file if it not used
                 audioSource.src = '';
                 audioNote.innerText = '';
                 $scope.audio = getDefaultAudio();
@@ -244,6 +245,8 @@
                     data = angular.fromJson(request.response);
                     $mainScope.audio.path = data.src;
                     $mainScope.audio.note = data.fileName;
+
+                    console.log($mainScope.audio);
 
                     var srcToMp3 = document.getElementById('srcToMp3');
                     srcToMp3.src = data.src;
