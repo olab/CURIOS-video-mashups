@@ -90,30 +90,61 @@ class SnippetController extends \BaseController
         }
 
         //save annotations
-        foreach ($annotations as $annotation) {
-            if (!is_object($annotation) || empty($annotation)) continue;
+        $annotations_ids = [];
+        if(!empty($annotations)) {
+            foreach ($annotations as $annotation) {
+                if (!is_object($annotation) || empty($annotation)) continue;
 
-            $annotationStart = $this->objToTime($annotation->start);
-            $annotationEnd = $this->objToTime($annotation->end);
+                $annotationStart = $this->objToTime($annotation->start);
+                $annotationEnd = $this->objToTime($annotation->end);
+                $action = isset($annotation->action) ? $annotation->action : false;
 
-            $action = isset($annotation->action) ? $annotation->action : false;
+                if ($action == 'insert' || (in_array($action, ['loaded']) && $role == 'author')) {
+                    $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,
+                        $annotation->height, $annotation->width, $annotationStart, $annotationEnd, $annotation->text,
+                        $annotation->transparency, $annotation->fontSize, $annotation->color);
 
-            if($action == 'insert' || ($action == 'loaded' && $role == 'author')){
-                $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,
-                    $annotation->height, $annotation->width, $annotationStart, $annotationEnd, $annotation->text,
-                    $annotation->transparency, $annotation->fontSize, $annotation->color);
+                    $annotations_ids[] = $annotationId;
 
-                VideoAnnotation::create([
-                    'video_id' => $videoId,
-                    'annotation_id' => $annotationId
-                ]);
-            }elseif($action == 'delete' && $role == 'superuser' && isset($annotation->id)){
-                AnnotationSetting::destroy($annotation->id);
-                VideoAnnotation::where(['video_id' => $videoId, 'annotation_id' => $annotation->id])->delete();
+                    VideoAnnotation::create([
+                        'video_id' => $videoId,
+                        'annotation_id' => $annotationId
+                    ]);
+                }
             }
         }
 
-        exit(json_encode(['id' => $videoId, 'idBase64' =>VideoSettings::urlsafe_b64encode($videoId)]));
+        if($role == 'superuser'){
+            $query = VideoAnnotation::where([
+                'video_id' => $videoId,
+            ]);
+
+            if(!empty($annotations_ids)) {
+                $query->whereNotIn('annotation_id', $annotations_ids);
+            }
+
+            $annotations_for_delete = $query->get();
+
+            if(!empty($annotations_for_delete) && count($annotations_for_delete) > 0){
+
+                $annotations_for_delete_ids = [];
+                foreach($annotations_for_delete as $row){
+                    $annotations_for_delete_ids[] = $row->annotation_id;
+                }
+
+                VideoAnnotation::where(['video_id' => $videoId])
+                    ->whereIn('annotation_id', $annotations_for_delete_ids)
+                    ->delete();
+
+                AnnotationSetting::whereIn('id', $annotations_for_delete_ids)->delete();
+
+            }
+        }
+
+        die(json_encode([
+            'id' => $videoId,
+            'idBase64' => VideoSettings::urlsafe_b64encode($videoId),
+        ]));
     }
 
     /**
