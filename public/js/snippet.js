@@ -165,8 +165,9 @@
                     setAudio(data.audioInfo);
                     setAnnotation(data.annotationInfo);
                     var generateBtn = document.getElementById('btn-generate'),
-                        generateBtnText = 'Save changes & show code',
-                        role = document.getElementById('user-role').value;
+                        generateBtnText = 'Save changes',
+                        role = document.getElementById('user-role').value,
+                        iframeCode = document.getElementById('resultCode');
 
                     if(role == 'author'){
                         generateBtnText = 'Save changes & generate code with new slug';
@@ -174,6 +175,9 @@
                     generateBtn.innerText = generateBtnText;
 
                     $scope.stepNum = 5;
+
+                    iframeCode.innerHTML = data.code;
+                    $scope.wasGenerated = true;
                 }
             }).error(function(e){
                 console.log(e);
