@@ -99,6 +99,10 @@ class SnippetController extends \BaseController
                 $annotationEnd = $this->objToTime($annotation->end);
                 $action = isset($annotation->action) ? $annotation->action : false;
 
+                if(in_array($action, ['loaded']) && isset($annotation->id)){
+                    $annotations_ids[] = $annotation->id;
+                }
+
                 if ($action == 'insert' || (in_array($action, ['loaded']) && $role == 'author')) {
                     $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,
                         $annotation->height, $annotation->width, $annotationStart, $annotationEnd, $annotation->text,
@@ -115,6 +119,9 @@ class SnippetController extends \BaseController
         }
 
         if($role == 'superuser'){
+
+            $annotations_ids = array_unique($annotations_ids);
+
             $query = VideoAnnotation::where([
                 'video_id' => $videoId,
             ]);
