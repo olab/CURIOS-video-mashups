@@ -65,13 +65,17 @@
             seconds = (seconds < 60) ? seconds : 60;
             minutes = (minutes < 60) ? minutes : 60;
 
+            rangeObj.hours = [];
             for (var h = 0; h < hours; h++) {
                 rangeObj.hours.push(h);
             }
 
+            rangeObj.minutes = [];
             for (var m = 0; m < minutes; m++) {
                 rangeObj.minutes.push(m);
             }
+
+            rangeObj.seconds = [];
             for (var s = 0; s < seconds; s++) {
                 rangeObj.seconds.push(s);
             }
@@ -127,7 +131,7 @@
                             setTime(data.end_time, $scope.audio.end); // set audio end time
                         };
                     } else {
-                        $scope.audio.exist = '';
+                        $scope.audio.exist = 'no';
                     }
                 }
 
@@ -207,7 +211,10 @@
         $scope.toFourthStep = function(){
             $mainScope.stepNum = ($mainScope.stepNum < 4) ? 4 : $mainScope.stepNum;
 
+
+            console.log('toFourthStep');
             if ($mainScope.audio.exist == 'no') {
+                console.log('delete audio');
                 audioSource.src = '';
                 audioNote.innerText = '';
                 $scope.audio = getDefaultAudio();
@@ -397,7 +404,7 @@
         return {
             id: '',
             path: '',
-            exist: '',
+            exist: 'no',
             start: {h: 0, m: 0, s: 0},
             end: {h: 0, m: 0, s: 0},
             volume: 100,
