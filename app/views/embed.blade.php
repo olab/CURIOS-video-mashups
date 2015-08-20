@@ -29,7 +29,7 @@
                 htmlAnnotations = [],
                 currentVideoTime = video.start_time,
                 previousVideoTime = 0,
-                audioStartTime = video.start_time + audio.start_time,
+                audioStartTime = parseInt(video.start_time) + parseInt(audio.start_time),
                 audioDelayConst = 0.5;
 
             console.log(video.start_time);
