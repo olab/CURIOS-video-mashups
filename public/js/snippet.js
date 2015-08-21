@@ -324,8 +324,6 @@
             $mainScope.annotations[removeId].action = 'delete';
             $mainScope.annotationForDelete.remove();
             $mainScope.annotationForDelete = false;
-            console.log($mainScope.annotations);
-            console.log(removeId);
         };
 
         $scope.toFifthStep = function(){
@@ -374,7 +372,6 @@
             $http.post('player/generate', {
                 json: angular.toJson($allData)
             }).success(function(data){
-                console.log(data);
                 $mainScope.wasGenerated = true;
                 $mainScope.player.id = parseInt(data.id);
                 $mainScope.player.idBase64 = data.idBase64;
