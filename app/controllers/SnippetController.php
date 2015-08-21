@@ -38,7 +38,7 @@ class SnippetController extends \BaseController
         $videoStart = $this->objToTime($player->start);
         $videoEnd = $this->objToTime($player->end);
         $role = Auth::user()->status;
-        if($player->id && $role == 'superuser'){
+        if($player->id && $role === 'superuser'){
             $videoId = $player->id;
             VideoSettings::updateEntry($videoId, $player->videoCode, $videoStart, $videoEnd, $player->volume);
         } else {
@@ -63,18 +63,26 @@ class SnippetController extends \BaseController
                     'video_id' => $videoId,
                     'audio_id' => $audioId,
                 ]);
-            }elseif($role == 'superuser'){
+            }elseif($role === 'superuser'){
                 //update
                 $audioObj = AudioSettings::find($audioId);
                 $audioObj->path = $audio->note;
                 $audioObj->start_time = $audioStart;
                 $audioObj->end_time = $audioEnd;
                 $audioObj->volume = $audio->volume;
-                $audioObj->save();
+                $result = $audioObj->save();
             }
-        }elseif($role == 'superuser'){
+        }
+
+        if($role === 'superuser'){
             //delete
-            $videoAudioCollection = VideoAudio::where('video_id', '=', $videoId)->get();
+            $audioQuery = VideoAudio::where('video_id', '=', $videoId);
+
+            if(!empty($audioId)){
+                $audioQuery->where('audio_id', '<>', $audioId);
+            }
+
+            $videoAudioCollection = $audioQuery->get();
             if(count($videoAudioCollection) > 0){
                 foreach($videoAudioCollection as $videoAudioObj){
                     $path = AudioSettings::find($videoAudioObj->audio_id)->path;
@@ -118,7 +126,7 @@ class SnippetController extends \BaseController
             }
         }
 
-        if($role == 'superuser'){
+        if($role === 'superuser'){
 
             $annotations_ids = array_unique($annotations_ids);
 
