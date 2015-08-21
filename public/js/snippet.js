@@ -222,8 +222,6 @@
                 //TODO: delete uploaded file if it not used
                 audioSource.src = '';
                 audioNote.innerText = '';
-                $scope.audio = getDefaultAudio();
-                $scope.audio.exist = 'no';
                 $mainScope.audio = getDefaultAudio();
                 $mainScope.audio.exist = 'no';
             }
@@ -239,6 +237,7 @@
                 var file = audioFile.files[0];
 
                 $scope.audio.uploaded = 1;
+                $mainScope.audio.exist = 'yes';
 
                 var data = new FormData();
                 data.append('file', file);
@@ -369,6 +368,8 @@
 
             var uploadBySlugDiv = document.getElementById('upload-by-slug');
             uploadBySlugDiv.innerText = '';
+
+            console.log($allData);
 
             $http.post('player/generate', {
                 json: angular.toJson($allData)

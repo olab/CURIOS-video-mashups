@@ -63,7 +63,7 @@ class SnippetController extends \BaseController
                     'video_id' => $videoId,
                     'audio_id' => $audioId,
                 ]);
-            }else{
+            }elseif($role == 'superuser'){
                 //update
                 $audioObj = AudioSettings::find($audioId);
                 $audioObj->path = $audio->note;
