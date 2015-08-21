@@ -56,7 +56,7 @@ class SnippetController extends \BaseController
             $audioEnd = $this->objToTime($audio->end);
 
             $audioId = $audio->id;
-            if(empty($audioId) || (!empty($audioId) && $role == 'author')) {
+            if(empty($audioId) || (!empty($audioId) && $role === 'author')) {
                 //insert
                 $audioId = AudioSettings::createEntry($audio->note, $audioStart, $audioEnd, $audio->volume);
                 VideoAudio::create([
@@ -74,8 +74,8 @@ class SnippetController extends \BaseController
             }
         }
 
+        //delete
         if($role === 'superuser'){
-            //delete
             $audioQuery = VideoAudio::where('video_id', '=', $videoId);
 
             if(!empty($audioId)){
@@ -126,6 +126,7 @@ class SnippetController extends \BaseController
             }
         }
 
+        //delete
         if($role === 'superuser'){
 
             $annotations_ids = array_unique($annotations_ids);
