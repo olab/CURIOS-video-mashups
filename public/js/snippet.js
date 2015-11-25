@@ -347,7 +347,7 @@
         var $mainScope = $scope.$parent;
         $scope.outputResult = function(){
             var resultScreen = document.getElementById('resultScreen');
-            var embed = document.createElement('embed');
+            var embed = document.createElement('iframe');
 
             embed.src = baseUrl + '/player/embed?slug=' + $mainScope.player.idBase64;
             embed.width = '480px';
@@ -376,7 +376,7 @@
                 $mainScope.player.id = parseInt(data.id);
                 $mainScope.player.idBase64 = data.idBase64;
                 document.getElementById('resultCode').innerHTML =
-                    '<embed src="' + baseUrl + '/player/embed?slug=' + data.idBase64 + '" width="480px" height="360px"></embed>';
+                    '<iframe src="' + baseUrl + '/player/embed?slug=' + data.idBase64 + '" width="480px" height="360px"></iframe>';
             }).error(function(e){
                 console.log(e);
             });

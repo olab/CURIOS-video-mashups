@@ -206,7 +206,7 @@ class SnippetController extends \BaseController
             $result['playerInfo'] = $videoObj;
             $result['audioInfo'] = AudioSettings::getAudioByVideoId($videoId);
             $result['annotationInfo'] = [];
-            $result['code'] = '<embed src="'. URL::to('/player/embed?slug=' . VideoSettings::urlsafe_b64encode($videoObj->id)) .'" width="480px" height="360px"></embed>';
+            $result['code'] = '<iframe src="'. URL::to('/player/embed?slug=' . VideoSettings::urlsafe_b64encode($videoObj->id)) .'" width="480px" height="360px"></iframe>';
 
 
             $annotationInfo = VideoAnnotation::getAnnotationByVideoId($videoId);

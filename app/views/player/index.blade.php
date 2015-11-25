@@ -47,7 +47,7 @@
         <label ng-hide="player.id == 'new'">
             <button>Generate link</button>
             <br>
-            <textarea readonly><embed src="http://videoplayer/player/embed?slug=NQ==" width="220px" height="220px"></embed></textarea>
+            <textarea readonly><iframe src="http://videoplayer/player/embed?slug=NQ==" width="220px" height="220px"></iframe></textarea>
         </label>
     </body>
 </html>
