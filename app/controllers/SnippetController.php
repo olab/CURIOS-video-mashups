@@ -182,6 +182,28 @@ class SnippetController extends \BaseController
 
     public function embed()
     {
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : null;
+        /*if(!empty($origin)) {
+
+            $isAllowedOrigin = $this->isAllowedOrigin($origin);
+
+            if (!$isAllowedOrigin) {
+                die('Origin not allowed.');
+            }
+
+            switch ($origin) {
+                //case 'http://olab':
+                //case 'https://olab':
+                default:
+                    header('Access-Control-Allow-Origin: ' . $origin);
+                    header('Access-Control-Allow-Methods: OPTIONS, POST, GET, PUT, DELETE');
+                    header('Access-Control-Allow-Headers: *');
+                    header('Access-Control-Allow-Credentials: true');
+                    header('P3P: CP="Not used"');
+                    break;
+            }
+        }*/
+
         $videoId = VideoSettings::getIdBySlug(Input::get('slug'));
 
         $videoObj = VideoSettings::find($videoId);
@@ -192,7 +214,8 @@ class SnippetController extends \BaseController
             ->with(array(
                 'videoJSON' => json_encode($videoObj),
                 'audioJSON' => json_encode($audioObj),
-                'annotationsJSON' => json_encode($annotationsObj)
+                'annotationsJSON' => json_encode($annotationsObj),
+                'origin' => $origin,
             ));
     }
 
@@ -223,5 +246,10 @@ class SnippetController extends \BaseController
         }
 
         exit(json_encode($result));
+    }
+
+    private function isAllowedOrigin($origin)
+    {
+        return true;
     }
 }

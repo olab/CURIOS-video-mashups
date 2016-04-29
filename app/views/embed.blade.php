@@ -100,6 +100,8 @@
     function onPlayerReady(event) {
         event.target.unMute();
         event.target.setVolume(video.volume);
+
+        ADL.XAPIYoutubeStatements.onPlayerReady(event);
     }
 
     function onPlayerStateChange(event) {
@@ -111,6 +113,8 @@
         }
 
         onAudioStateChange(event.data);
+
+        ADL.XAPIYoutubeStatements.onStateChange(event);
     }
 
     function stopVideo() {
@@ -162,6 +166,150 @@
         htmlAnnotations.push(newElement)
     }
     // ----- end annotation block ----- //
+
+
+    // ----- xAPI Statements ----- //
+
+    (function (ADL) {
+        XAPIYoutubeStatements = function () {
+
+            var actor = {"mbox": "", "name": ""};
+            var videoActivity = {"id":"https://www.youtube.com/watch?v=" + video.code, "definition":{"name": {"en-US":video.code}} };
+
+            this.changeConfig = function (options) {
+                actor = options.actor;
+                videoActivity = options.videoActivity;
+            };
+
+            this.onPlayerReady = function (event) {
+                var message = "yt: player ready";
+                console.log(message);
+                xAPIonPlayerReady(event);
+            };
+
+            this.onStateChange = function (event) {
+                var curTime = player.getCurrentTime().toString();
+                var ISOTime = "PT" + curTime.slice(0, curTime.indexOf(".") + 3) + "S";
+                var stmt = null;
+                var e = "";
+                switch (event.data) {
+                    case -1:
+                        e = "unstarted";
+                        console.log("yt: " + e);
+                        break;
+                    case 0:
+                        e = "ended";
+                        console.log("yt: " + e);
+                        stmt = completeVideo(ISOTime);
+                        break;
+                    case 1:
+                        e = "playing";
+                        console.log("yt: " + e);
+                        stmt = playVideo(ISOTime);
+                        break;
+                    case 2:
+                        e = "paused";
+                        console.log("yt: " + e);
+                        stmt = pauseVideo(ISOTime);
+                        break;
+                    case 3:
+                        e = "buffering";
+                        console.log("yt: " + e);
+                        break;
+                    case 5:
+                        e = "cued";
+                        console.log("yt: " + e);
+                        break;
+                    default:
+                }
+                ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
+            };
+
+            this.onXAPIEvent = function (stmt) {
+                window.parent.postMessage({type: 'xAPIStatement', statement: stmt}, '*');
+            };
+
+            function xAPIonPlayerReady(event)
+            {
+
+            }
+
+            function buildStatement(stmt) {
+                stmt.actor = actor;
+                stmt.object = videoActivity;
+                stmt.timestamp = (new Date()).toISOString();
+                return stmt;
+            }
+
+            function playVideo(ISOTime) {
+                var stmt = {};
+
+                if (ISOTime == "PT0S") {
+                    stmt.verb = ADL.verbs.launched;
+                } else {
+                    stmt.verb = ADL.verbs.resumed;
+                    stmt.result = {"extensions": {"resultExt:resumed": ISOTime}};
+                }
+                return buildStatement(stmt);
+            }
+
+            function pauseVideo(ISOTime) {
+                var stmt = {};
+
+                stmt.verb = ADL.verbs.suspended;
+                stmt.result = {"extensions": {"resultExt:paused": ISOTime}};
+
+                return buildStatement(stmt);
+            }
+
+            function completeVideo(ISOTime) {
+                var stmt = {};
+
+                stmt.verb = ADL.verbs.completed;
+                stmt.result = {"duration": ISOTime, "completion": true};
+
+                return buildStatement(stmt);
+            }
+
+        };
+
+        ADL.XAPIYoutubeStatements = new XAPIYoutubeStatements();
+
+    }(window.ADL = window.ADL || {}));
+
+
+    //IE use "attachEvent" and "onmessage"
+    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    var eventer = window[eventMethod];
+    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+    eventer(messageEvent, receiveMessage);
+
+    window.parent.postMessage({type: 'videoServiceLoaded'}, '*');
+
+    function receiveMessage(event)
+    {
+        var origin = event.origin || event.originalEvent.origin; // For Chrome, the origin property is in the event.originalEvent object.
+
+        console.log(event);
+        console.log(origin);
+
+        var dataKey = event.message ? "message" : "data";
+        var data = event[dataKey];
+
+        switch (data.type){
+            case 'changeConfig':
+                ADL.XAPIYoutubeStatements.changeConfig({
+                    "actor":  data.actor
+                });
+                break;
+
+            default:
+                return;
+                break;
+        }
+    }
+
 </script>
 </body>
 </html>
