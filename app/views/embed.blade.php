@@ -15,6 +15,7 @@
 
 <script>
     var
+            YOUTUBE_URL = 'https://www.youtube.com/',
             YT_VIDEO_PLAY = 1,
             YT_VIDEO_STOP = 2,
             $screen = document.getElementById('screen'),
@@ -74,7 +75,7 @@
 
     // This code loads the IFrame Player API code asynchronously.
     var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
+    tag.src = YOUTUBE_URL + 'iframe_api';
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
@@ -170,64 +171,105 @@
 
     // ----- xAPI Statements ----- //
 
+    var xAPIVerbs = {
+        launched: '',
+        resumed: '',
+        suspended: '',
+        completed: ''
+    };
+
     (function (ADL) {
         XAPIYoutubeStatements = function () {
 
             var actor = {"mbox": "", "name": ""};
-            var videoActivity = {
-                "id": "https://www.youtube.com/watch?v=" + video.code,
+            var object = {
+                "id": YOUTUBE_URL + "watch?v=" + video.code,
                 "definition": {"name": {"en-US": video.code}}
             };
+            var lastPlayerState = null;
+            var lastPlayerTime = null;
 
             this.changeConfig = function (options) {
-                actor = options.actor;
+                if (typeof options.actor != 'undefined') {
+                    actor = options.actor;
+                }
+
+                if (typeof options.object != 'undefined') {
+                    object = options.object;
+                }
             };
 
             this.onPlayerReady = function (event) {
                 var message = "yt: player ready";
                 console.log(message);
+
+                this.changeConfig({
+                    "object": {
+                        "id": YOUTUBE_URL + "watch?v=" + video.code,
+                        "definition": {"name": {"en-US": player.getVideoData().title}}
+                    }
+                });
+
                 xAPIonPlayerReady(event);
             };
 
             this.onStateChange = function (event) {
-                var curTime = player.getCurrentTime().toString();
-                var ISOTime = "PT" + curTime.slice(0, curTime.indexOf(".") + 3) + "S";
+                var currentTime = player.getCurrentTime().toString();
+                var currentISOTime = "PT" + currentTime.slice(0, currentTime.indexOf(".") + 3) + "S";
                 var stmt = null;
                 var e = "";
                 switch (event.data) {
-                    case -1:
+
+                    case YT.PlayerState.UNSTARTED:
                         e = "unstarted";
                         console.log("yt: " + e);
                         break;
-                    case YT.PlayerState.ENDED:
-                        e = "ended";
-                        console.log("yt: " + e);
-                        stmt = completeVideo(ISOTime);
-                        break;
+
                     case YT.PlayerState.PLAYING:
                         e = "playing";
                         console.log("yt: " + e);
-                        stmt = playVideo(ISOTime);
+                        if (currentTime == video.start_time || currentTime == 0) {
+                            stmt = videoStarted();
+                        } else {
+                            stmt = videoResumed(currentISOTime);
+                        }
                         break;
+
                     case YT.PlayerState.PAUSED:
                         e = "paused";
                         console.log("yt: " + e);
-                        stmt = pauseVideo(ISOTime);
+
+                        if (lastPlayerState === YT.PlayerState.PAUSED) {
+                            stmt = videoSkipped(lastPlayerTime, currentTime);
+                        } else {
+                            stmt = videoPaused(currentISOTime);
+                        }
+
                         break;
+
+                    case YT.PlayerState.ENDED:
+                        e = "ended";
+                        console.log("yt: " + e);
+                        stmt = videoEnded(currentISOTime);
+                        break;
+
                     case YT.PlayerState.BUFFERING:
                         e = "buffering";
                         console.log("yt: " + e);
                         break;
+
                     case YT.PlayerState.CUED:
                         e = "cued";
                         console.log("yt: " + e);
                         break;
-                    default:
                 }
 
                 if (stmt !== null) {
-                    ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
+                    this.onXAPIEvent(stmt);
                 }
+
+                lastPlayerTime = currentTime;
+                lastPlayerState = event.data;
             };
 
             this.onXAPIEvent = function (stmt) {
@@ -240,41 +282,48 @@
 
             function buildStatement(stmt) {
                 stmt.actor = actor;
-                stmt.object = videoActivity;
+                stmt.object = object;
                 stmt.timestamp = (new Date()).toISOString();
 
                 return stmt;
             }
 
-            function playVideo(ISOTime) {
+            function videoStarted() {
                 var stmt = {};
-
-                if (ISOTime == "PT0S") {
-                    stmt.verb = ADL.verbs.launched;
-                } else {
-                    stmt.verb = ADL.verbs.resumed;
-                    stmt.result = {"extensions": {"resultExt:resumed": ISOTime}};
-                }
+                stmt.verb = xAPIVerbs.launched;
 
                 return buildStatement(stmt);
             }
 
-            function pauseVideo(ISOTime) {
+            function videoResumed(ISOTime) {
+                var stmt = {};
+                stmt.verb = xAPIVerbs.resumed;
+                stmt.result = {"extensions": {"resultExt:resumed": ISOTime}};
+
+                return buildStatement(stmt);
+            }
+
+            function videoPaused(ISOTime) {
                 var stmt = {};
 
-                stmt.verb = ADL.verbs.suspended;
+                stmt.verb = xAPIVerbs.suspended;
                 stmt.result = {"extensions": {"resultExt:paused": ISOTime}};
 
                 return buildStatement(stmt);
             }
 
-            function completeVideo(ISOTime) {
+            function videoEnded(ISOTime) {
                 var stmt = {};
 
-                stmt.verb = ADL.verbs.completed;
+                stmt.verb = xAPIVerbs.completed;
                 stmt.result = {"duration": ISOTime, "completion": true};
 
                 return buildStatement(stmt);
+            }
+
+            function videoSkipped() {
+                //TODO: implement
+                return null;
             }
 
         };
