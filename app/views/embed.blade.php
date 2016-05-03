@@ -242,6 +242,7 @@
                 stmt.actor = actor;
                 stmt.object = videoActivity;
                 stmt.timestamp = (new Date()).toISOString();
+
                 return stmt;
             }
 
@@ -254,6 +255,7 @@
                     stmt.verb = ADL.verbs.resumed;
                     stmt.result = {"extensions": {"resultExt:resumed": ISOTime}};
                 }
+
                 return buildStatement(stmt);
             }
 
