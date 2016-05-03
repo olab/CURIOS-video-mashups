@@ -174,11 +174,13 @@
         XAPIYoutubeStatements = function () {
 
             var actor = {"mbox": "", "name": ""};
-            var videoActivity = {"id":"https://www.youtube.com/watch?v=" + video.code, "definition":{"name": {"en-US":video.code}} };
+            var videoActivity = {
+                "id": "https://www.youtube.com/watch?v=" + video.code,
+                "definition": {"name": {"en-US": video.code}}
+            };
 
             this.changeConfig = function (options) {
                 actor = options.actor;
-                videoActivity = options.videoActivity;
             };
 
             this.onPlayerReady = function (event) {
@@ -197,40 +199,42 @@
                         e = "unstarted";
                         console.log("yt: " + e);
                         break;
-                    case 0:
+                    case YT.PlayerState.ENDED:
                         e = "ended";
                         console.log("yt: " + e);
                         stmt = completeVideo(ISOTime);
                         break;
-                    case 1:
+                    case YT.PlayerState.PLAYING:
                         e = "playing";
                         console.log("yt: " + e);
                         stmt = playVideo(ISOTime);
                         break;
-                    case 2:
+                    case YT.PlayerState.PAUSED:
                         e = "paused";
                         console.log("yt: " + e);
                         stmt = pauseVideo(ISOTime);
                         break;
-                    case 3:
+                    case YT.PlayerState.BUFFERING:
                         e = "buffering";
                         console.log("yt: " + e);
                         break;
-                    case 5:
+                    case YT.PlayerState.CUED:
                         e = "cued";
                         console.log("yt: " + e);
                         break;
                     default:
                 }
-                ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
+
+                if (stmt !== null) {
+                    ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
+                }
             };
 
             this.onXAPIEvent = function (stmt) {
                 window.parent.postMessage({type: 'xAPIStatement', statement: stmt}, '*');
             };
 
-            function xAPIonPlayerReady(event)
-            {
+            function xAPIonPlayerReady(event) {
 
             }
 
@@ -287,8 +291,7 @@
 
     window.parent.postMessage({type: 'videoServiceLoaded'}, '*');
 
-    function receiveMessage(event)
-    {
+    function receiveMessage(event) {
         var origin = event.origin || event.originalEvent.origin; // For Chrome, the origin property is in the event.originalEvent object.
 
         console.log(event);
@@ -297,10 +300,10 @@
         var dataKey = event.message ? "message" : "data";
         var data = event[dataKey];
 
-        switch (data.type){
+        switch (data.type) {
             case 'changeConfig':
                 ADL.XAPIYoutubeStatements.changeConfig({
-                    "actor":  data.actor
+                    "actor": data.actor
                 });
                 break;
 
@@ -309,6 +312,8 @@
                 break;
         }
     }
+
+    // ----- end xAPI Statements ----- //
 
 </script>
 </body>
