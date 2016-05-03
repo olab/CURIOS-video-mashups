@@ -172,10 +172,22 @@
     // ----- xAPI Statements ----- //
 
     var xAPIVerbs = {
-        launched: '',
-        resumed: '',
-        suspended: '',
-        completed: ''
+        launched: {
+            'id': 'http://adlnet.gov/expapi/verbs/launched',
+            'display': {"en-US": 'launched'}
+        },
+        resumed: {
+            'id': 'http://adlnet.gov/expapi/verbs/resumed',
+            'display': {"en-US": 'resumed'}
+        },
+        suspended: {
+            'id': 'http://adlnet.gov/expapi/verbs/suspended',
+            'display': {"en-US": 'suspended'}
+        },
+        completed: {
+            'id': 'http://adlnet.gov/expapi/verbs/completed',
+            'display': {"en-US": 'completed'}
+        }
     };
 
     (function (ADL) {
