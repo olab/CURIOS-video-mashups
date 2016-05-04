@@ -28,40 +28,45 @@
             audio = {{ $audioJSON }},
             annotations = {{ $annotationsJSON }},
             htmlAnnotations = [],
-            currentVideoTime = video.start_time,
+            currentVideoTime = parseFloat(video.start_time),
             previousVideoTime = 0,
-            audioStartTime = parseInt(video.start_time) + parseInt(audio.start_time),
-            audioEndTime = parseInt(video.start_time) + parseInt(audio.end_time),
+            audioStartTime = parseFloat(video.start_time) + parseFloat(audio.start_time),
+            audioEndTime = parseFloat(video.start_time) + parseFloat(audio.end_time),
             audioDelayConst = 0.5;
 
     // function which run every second
-    setInterval(function () {
-        previousVideoTime = currentVideoTime;
-        currentVideoTime = player.getCurrentTime();
+    function run() {
+        setInterval(function () {
+            previousVideoTime = currentVideoTime;
+            currentVideoTime = player.getCurrentTime();
 
-        var timeTravel = currentVideoTime - previousVideoTime;
+            if (audio) {
 
-        if (timeTravel < 0 || timeTravel > 1.5) {
-            $audio.currentTime = currentVideoTime - audioStartTime;
-            console.log('manually change time');
-        }
+                var timeTravel = currentVideoTime - previousVideoTime;
 
-        if (
-                (currentVideoTime >= (audioStartTime - audioDelayConst)) &&
-                (currentVideoTime <= (audioEndTime - audioDelayConst))
-        ) {
-            audioActive = true;
-            if (videoIsPlayed && !audioIsPlayed) {
-                player.setVolume(video.volume);
-                onAudioStateChange();
+                if (timeTravel < 0 || timeTravel > 1.5) {
+                    //time has been manually changed
+                    $audio.currentTime = currentVideoTime - audioStartTime;
+                }
+
+                if (
+                        (currentVideoTime >= (audioStartTime - audioDelayConst)) &&
+                        (currentVideoTime <= (audioEndTime - audioDelayConst))
+                ) {
+                    audioActive = true;
+                    if (videoIsPlayed && !audioIsPlayed) {
+                        player.setVolume(video.volume);
+                        onAudioStateChange();
+                    }
+                } else {
+                    audioActive = false;
+                    onAudioStateChange();
+                }
             }
-        } else {
-            audioActive = false;
-            onAudioStateChange();
-        }
 
-        annotationsEvent(currentVideoTime);
-    }, 1000);
+            annotationsEvent(currentVideoTime);
+        }, 1000);
+    }
 
     function annotationsEvent(currentVideoTime) {
         annotations.forEach(function (annotation, idNum) {
@@ -99,6 +104,7 @@
     }
 
     function onPlayerReady(event) {
+        run();
         event.target.unMute();
         event.target.setVolume(video.volume);
 
@@ -172,9 +178,9 @@
     // ----- xAPI Statements ----- //
 
     var xAPIVerbs = {
-        launched: {
-            'id': 'http://adlnet.gov/expapi/verbs/launched',
-            'display': {"en-US": 'launched'}
+        play: {
+            'id': 'http://activitystrea.ms/schema/1.0/play',
+            'display': {"en-US": 'play'}
         },
         resumed: {
             'id': 'http://adlnet.gov/expapi/verbs/resumed',
@@ -187,6 +193,10 @@
         completed: {
             'id': 'http://adlnet.gov/expapi/verbs/completed',
             'display': {"en-US": 'completed'}
+        },
+        seeked: {
+            'id': 'seeked',
+            'display': {"en-US": 'seeked'}
         }
     };
 
@@ -222,7 +232,7 @@
                     }
                 });
 
-                xAPIonPlayerReady(event);
+                trackPlayerTime();
             };
 
             this.onStateChange = function (event) {
@@ -241,7 +251,7 @@
                         e = "playing";
                         console.log("yt: " + e);
                         if (currentTime == video.start_time || currentTime == 0) {
-                            stmt = videoStarted();
+                            stmt = videoPlayed(currentISOTime);
                         } else {
                             stmt = videoResumed(currentISOTime);
                         }
@@ -250,13 +260,7 @@
                     case YT.PlayerState.PAUSED:
                         e = "paused";
                         console.log("yt: " + e);
-
-                        if (lastPlayerState === YT.PlayerState.PAUSED) {
-                            stmt = videoSkipped(lastPlayerTime, currentTime);
-                        } else {
-                            stmt = videoPaused(currentISOTime);
-                        }
-
+                        stmt = videoPaused(currentISOTime);
                         break;
 
                     case YT.PlayerState.ENDED:
@@ -280,7 +284,6 @@
                     this.onXAPIEvent(stmt);
                 }
 
-                lastPlayerTime = currentTime;
                 lastPlayerState = event.data;
             };
 
@@ -288,8 +291,23 @@
                 window.parent.postMessage({type: 'xAPIStatement', statement: stmt}, '*');
             };
 
-            function xAPIonPlayerReady(event) {
+            function trackPlayerTime() {
+                setInterval(function () {
+                    var currentPlayerTime = player.getCurrentTime().toString();
 
+                    if (lastPlayerTime !== null) {
+                        var timeTravel = currentPlayerTime - lastPlayerTime;
+
+                        if (timeTravel < 0 || timeTravel > 1.5) {
+                            //time has been manually changed
+                            console.log('yt: time has been manually changed');
+                            //stmt = videoSkipped(lastPlayerTime, currentPlayerTime);
+                            //ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
+                        }
+                    }
+
+                    lastPlayerTime = player.getCurrentTime().toString();
+                }, 1000);
             }
 
             function buildStatement(stmt) {
@@ -300,9 +318,14 @@
                 return stmt;
             }
 
-            function videoStarted() {
+            function videoPlayed(currentISOTime) {
                 var stmt = {};
-                stmt.verb = xAPIVerbs.launched;
+                stmt.verb = xAPIVerbs.play;
+                stmt.context = {
+                    "extensions": {
+                        "http://demo.watershedlrs.com/tincan/extensions/start_point": currentISOTime
+                    }
+                };
 
                 return buildStatement(stmt);
             }
@@ -333,9 +356,20 @@
                 return buildStatement(stmt);
             }
 
-            function videoSkipped() {
-                //TODO: implement
-                return null;
+            function videoSkipped(lastPlayerTime, currentPlayerTime) {
+                var currentPlayerISOTime = "PT" + currentPlayerTime.slice(0, currentPlayerTime.indexOf(".") + 3) + "S";
+                var lastPlayerISOTime = "PT" + lastPlayerTime.slice(0, lastPlayerTime.indexOf(".") + 3) + "S";
+                var stmt = {};
+
+                stmt.verb = xAPIVerbs.seeked;
+                stmt.context = {
+                    "extensions": {
+                        "http://demo.watershedlrs.com/tincan/extensions/start_point": lastPlayerISOTime,
+                        "http://demo.watershedlrs.com/tincan/extensions/end_point": currentPlayerISOTime
+                    }
+                };
+
+                return buildStatement(stmt);
             }
 
         };
