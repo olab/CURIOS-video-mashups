@@ -11,13 +11,13 @@ class SnippetController extends \BaseController
 
     public function ajaxUploadAudio()
     {
-        $audio  = Input::file('file');
+        $audio = Input::file('file');
         $srcUrl = '';
         $audioName = '';
 
         if ($audio) {
             $destinationPath = public_path() . DIRECTORY_SEPARATOR . 'audio' . DIRECTORY_SEPARATOR;
-            $audioName = time() . '_' .$audio->getClientOriginalName();
+            $audioName = time() . '_' . $audio->getClientOriginalName();
             $audio->move($destinationPath, $audioName);
             $src = '/audio/' . $audioName;
             $srcUrl = asset($src);
@@ -29,16 +29,16 @@ class SnippetController extends \BaseController
     //when authors try to update snippet - always create new one
     public function generate()
     {
-        $allData        = json_decode(Input::get('json'));
-        $player         = $allData->player;
-        $audio          = $allData->audio;
-        $annotations    = $allData->annotations;
+        $allData = json_decode(Input::get('json'));
+        $player = $allData->player;
+        $audio = $allData->audio;
+        $annotations = $allData->annotations;
 
         // save youtube video
         $videoStart = $this->objToTime($player->start);
         $videoEnd = $this->objToTime($player->end);
         $role = Auth::user()->status;
-        if($player->id && $role === 'superuser'){
+        if ($player->id && $role === 'superuser') {
             $videoId = $player->id;
             VideoSettings::updateEntry($videoId, $player->videoCode, $videoStart, $videoEnd, $player->volume);
         } else {
@@ -51,19 +51,19 @@ class SnippetController extends \BaseController
 
         //save audio
         $audioPath = $audio->path;
-        if (!empty($audioPath)){
+        if (!empty($audioPath)) {
             $audioStart = $this->objToTime($audio->start);
             $audioEnd = $this->objToTime($audio->end);
 
             $audioId = $audio->id;
-            if(empty($audioId) || (!empty($audioId) && $role === 'author')) {
+            if (empty($audioId) || (!empty($audioId) && $role === 'author')) {
                 //insert
                 $audioId = AudioSettings::createEntry($audio->note, $audioStart, $audioEnd, $audio->volume);
                 VideoAudio::create([
                     'video_id' => $videoId,
                     'audio_id' => $audioId,
                 ]);
-            }elseif($role === 'superuser'){
+            } elseif ($role === 'superuser') {
                 //update
                 $audioObj = AudioSettings::find($audioId);
                 $audioObj->path = $audio->note;
@@ -75,21 +75,21 @@ class SnippetController extends \BaseController
         }
 
         //delete
-        if($role === 'superuser'){
+        if ($role === 'superuser') {
             $audioQuery = VideoAudio::where('video_id', '=', $videoId);
 
-            if(!empty($audioId)){
+            if (!empty($audioId)) {
                 $audioQuery->where('audio_id', '<>', $audioId);
             }
 
             $videoAudioCollection = $audioQuery->get();
-            if(count($videoAudioCollection) > 0){
-                foreach($videoAudioCollection as $videoAudioObj){
+            if (count($videoAudioCollection) > 0) {
+                foreach ($videoAudioCollection as $videoAudioObj) {
                     $path = AudioSettings::find($videoAudioObj->audio_id)->path;
                     $file_usages = AudioSettings::getByPath($path)->get();
-                    if(!empty($file_usages) && count($file_usages) > 1) {
+                    if (!empty($file_usages) && count($file_usages) > 1) {
                         AudioSettings::destroy($videoAudioObj->audio_id);
-                    }else{
+                    } else {
                         AudioSettings::deleteEntry($videoAudioObj->audio_id);
                     }
                     $videoAudioObj->delete();
@@ -99,20 +99,23 @@ class SnippetController extends \BaseController
 
         //save annotations
         $annotations_ids = [];
-        if(!empty($annotations)) {
+        if (!empty($annotations)) {
             foreach ($annotations as $annotation) {
-                if (!is_object($annotation) || empty($annotation)) continue;
+                if (!is_object($annotation) || empty($annotation)) {
+                    continue;
+                }
 
                 $annotationStart = $this->objToTime($annotation->start);
                 $annotationEnd = $this->objToTime($annotation->end);
                 $action = isset($annotation->action) ? $annotation->action : false;
 
-                if(in_array($action, ['loaded']) && isset($annotation->id)){
+                if (in_array($action, ['loaded']) && isset($annotation->id)) {
                     $annotations_ids[] = $annotation->id;
                 }
 
                 if ($action == 'insert' || (in_array($action, ['loaded']) && $role == 'author')) {
-                    $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround, $annotation->x, $annotation->y,
+                    $annotationId = AnnotationSetting::createEntry($annotation->form, $annotation->backGround,
+                        $annotation->x, $annotation->y,
                         $annotation->height, $annotation->width, $annotationStart, $annotationEnd, $annotation->text,
                         $annotation->transparency, $annotation->fontSize, $annotation->color);
 
@@ -127,7 +130,7 @@ class SnippetController extends \BaseController
         }
 
         //delete
-        if($role === 'superuser'){
+        if ($role === 'superuser') {
 
             $annotations_ids = array_unique($annotations_ids);
 
@@ -135,16 +138,16 @@ class SnippetController extends \BaseController
                 'video_id' => $videoId,
             ]);
 
-            if(!empty($annotations_ids)) {
+            if (!empty($annotations_ids)) {
                 $query->whereNotIn('annotation_id', $annotations_ids);
             }
 
             $annotations_for_delete = $query->get();
 
-            if(!empty($annotations_for_delete) && count($annotations_for_delete) > 0){
+            if (!empty($annotations_for_delete) && count($annotations_for_delete) > 0) {
 
                 $annotations_for_delete_ids = [];
-                foreach($annotations_for_delete as $row){
+                foreach ($annotations_for_delete as $row) {
                     $annotations_for_delete_ids[] = $row->annotation_id;
                 }
 
@@ -167,16 +170,19 @@ class SnippetController extends \BaseController
      * @param $obj
      * @return int time in seconds
      */
-    private function objToTime($obj){
+    private function objToTime($obj)
+    {
         return (($obj->h * 60) + $obj->m) * 60 + $obj->s;
     }
 
-    private function timeToObj($time){
+    private function timeToObj($time)
+    {
         $obj = new stdClass();
         $date = explode(':', gmdate('G:i:s', $time));
         $obj->h = (int)$date[0];
         $obj->m = (int)$date[1];
         $obj->s = (int)$date[2];
+
         return $obj;
     }
 
@@ -206,11 +212,11 @@ class SnippetController extends \BaseController
             $result['playerInfo'] = $videoObj;
             $result['audioInfo'] = AudioSettings::getAudioByVideoId($videoId);
             $result['annotationInfo'] = [];
-            $result['code'] = '<iframe src="'. URL::to('/player/embed?slug=' . VideoSettings::urlsafe_b64encode($videoObj->id)) .'" width="480px" height="360px"></iframe>';
+            $result['code'] = '<iframe src="' . URL::to('/player/embed?slug=' . VideoSettings::urlsafe_b64encode($videoObj->id)) . '" width="480px" height="360px"></iframe>';
 
 
             $annotationInfo = VideoAnnotation::getAnnotationByVideoId($videoId);
-            if(!empty($annotationInfo)) {
+            if (!empty($annotationInfo)) {
                 foreach ($annotationInfo as $annotation) {
                     $annotation->start = $this->timeToObj($annotation->start_time);
                     $annotation->end = $this->timeToObj($annotation->end_time);
