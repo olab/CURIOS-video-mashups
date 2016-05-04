@@ -195,7 +195,7 @@
             'display': {"en-US": 'completed'}
         },
         seeked: {
-            'id': 'seeked',
+            'id': 'http://w3id.org/xapi/medbiq/verbs/seeked',
             'display': {"en-US": 'seeked'}
         }
     };
@@ -301,8 +301,8 @@
                         if (timeTravel < 0 || timeTravel > 1.5) {
                             //time has been manually changed
                             console.log('yt: time has been manually changed');
-                            //stmt = videoSkipped(lastPlayerTime, currentPlayerTime);
-                            //ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
+                            stmt = videoSkipped(lastPlayerTime, currentPlayerTime);
+                            ADL.XAPIYoutubeStatements.onXAPIEvent(stmt);
                         }
                     }
 
