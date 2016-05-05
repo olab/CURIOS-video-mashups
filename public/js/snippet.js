@@ -14,7 +14,7 @@
         $scope.player = {
             id: 0,
             idBase64: '',
-            originalUrl: 'https://www.youtube.com/watch?v=iS0wuN_6wyw',
+            originalUrl: 'https://www.youtube.com/watch?v=b4b62thWFmM',
             videoCode: '',
             start: {h: 0, m: 0, s: 0},
             end: {h: 0, m: 0, s: 0},

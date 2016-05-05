@@ -25,7 +25,7 @@
                 ng-mouseleave="focusOut()">
                 <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; background-color: greenyellow;">popup text</div>
                 <div style="position: absolute; top: 0; left: 100px; width: 100px; height: 100px; background-color: yellow;">popup text</div>
-                <iframe height="315" src="//www.youtube.com/embed/iS0wuN_6wyw" frameborder="0"></iframe>
+                <iframe height="315" src="//www.youtube.com/embed/b4b62thWFmM" frameborder="0"></iframe>
             </div>
 
             <svg id="screen"
