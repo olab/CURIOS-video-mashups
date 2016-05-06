@@ -4,7 +4,6 @@ class SessionController extends \BaseController
 {
     public function create()
     {
-        //User::create(array('email'=>'admin@gmail.com', 'password'=>Hash::make('admin')));
         return View::make('session.create');
     }
 
