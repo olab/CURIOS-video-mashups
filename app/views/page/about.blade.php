@@ -22,7 +22,7 @@
         <li>Video mashups - curated and annotated video snippets of existing material</li>
         <li>Webinar series - interactive series, combining aspects from the other two arms. </li>
     </ul>
-    <p>You can learn more about CURIOS at <span style="text-decoration: underline;"><strong><a href="https://curios3.wordpress.com/" target="_blank">curios3.wordpress.com</a></strong></span> </p>
+    <p>You can learn more about CURIOS at <span style="text-decoration: underline;"><strong><a href="http://openlabyrinth.ca/curios/" target="_blank">openlabyrinth.ca/curios</a></strong></span> </p>
     <p>CURIOS Team:</p>
     <ul>
         <li>Dr David Topps</li>
