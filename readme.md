@@ -3,9 +3,15 @@ PHP >= 5.4
 MCrypt PHP Extension
 
 ## Setup project:
-1) Clone && cd /var/www/{{ $APP }}
+1) git clone && cd /var/www/{{ $APP }}
 2) composer install
 3) Modify (create) .env.php file on the root folder using suggestions from example.env.php
+4) php artisan migrate
+
+## Deploy (update) routine:
+1) cd /var/www/{{ $APP }}
+2) git pull
+3) composer install (if update required this)
 4) php artisan migrate
 
 ## Laravel PHP Framework
