@@ -13,7 +13,7 @@ nbproject
 Thumbs.db
 
 # composer vendor dir
-vendor/*
+/vendor
 
 # composer itself is not needed
 composer.phar
@@ -26,11 +26,9 @@ phpunit.phar
 # local phpunit config
 /phpunit.xml
 
-#laravel settings
-app/storage/*
+# laravel settings
 bootstrap/compiled.php
 .env.*.php
 .env.php
 
-#project settings
-public/audio/*
+# project settings
