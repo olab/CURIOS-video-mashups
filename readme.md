@@ -1,3 +1,13 @@
+## System requirements:
+PHP >= 5.4
+MCrypt PHP Extension
+
+## Setup project:
+1) Clone && cd /var/www/{{ $APP }}
+2) composer install
+3) Modify (create) .env.php file on the root folder using suggestions from example.env.php
+4) php artisan migrate
+
 ## Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
