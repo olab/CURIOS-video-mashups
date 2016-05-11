@@ -3,17 +3,20 @@ PHP >= 5.4
 MCrypt PHP Extension
 
 ## Setup project:
-1) install Composer if not installed (https://getcomposer.org)
-2) git clone && cd /var/www/{{ $APP }}
-3) execute command: composer install
-4) Modify (create) .env.php file on the root folder using suggestions from example.env.php
-5) execute command: php artisan migrate
+1. install `Composer` if not installed (https://getcomposer.org)
+2. git clone && cd /var/www/{{ $APP }}
+3. Modify (create) `.env.php` file in the root folder using suggestions from `example.env.php`
+4. execute command: `composer install`
+5. execute command: `php artisan migrate`
+6. Now you're able to sign in using test credentials (you may change it anytime):
+    * admin@gmail.com
+    * admin
 
 ## Deploy (update) routine:
-1) cd /var/www/{{ $APP }}
-2) execute command: git pull
-3) execute command: composer install (if update required this)
-4) execute command: php artisan migrate
+1. cd /var/www/{{ $APP }}
+2. execute command: `git pull`
+3. execute command: `composer install` (if update required this)
+4. execute command: `php artisan migrate`
 
 ## Laravel PHP Framework
 
