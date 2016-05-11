@@ -1,6 +1,6 @@
 ## System requirements:
-PHP >= 5.4
-MCrypt PHP Extension
+* PHP >= 5.4
+* MCrypt PHP Extension
 
 ## Setup project:
 1. install `Composer` if not installed (https://getcomposer.org)
@@ -9,8 +9,8 @@ MCrypt PHP Extension
 4. execute command: `composer install`
 5. execute command: `php artisan migrate`
 6. Now you're able to sign in using test credentials (you may change it anytime):
-    * admin@gmail.com
-    * admin
+    * login: admin@gmail.com
+    * password: admin
 
 ## Deploy (update) routine:
 1. cd /var/www/{{ $APP }}
@@ -19,12 +19,6 @@ MCrypt PHP Extension
 4. execute command: `php artisan migrate`
 
 ## Laravel PHP Framework
-
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/downloads.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, and caching.
 
