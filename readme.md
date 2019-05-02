@@ -1,39 +1,18 @@
 ## System requirements:
 * PHP >= 5.4
-* MCrypt PHP Extension
+* OpenLabyrinth v3.2 or later is recommended
+## Description:
 
-## Setup project:
-1. install `Composer` if not installed (https://getcomposer.org)
-2. git clone && cd /var/www/{{ $APP }}
-3. Modify (create) `.env.php` file in the root folder using suggestions from `example.env.php`
-4. execute command: `composer install`
-5. execute command: `php artisan migrate`
-6. Now you're able to sign in using test credentials (you may change it anytime):
-    * login: admin@gmail.com
-    * password: admin
+CURIOS is a standalone web-service but it works well with OpenLabyrinth for managing roles, access and slugs. 
 
-## Deploy (update) routine:
-1. cd /var/www/{{ $APP }}
-2. execute command: `git pull`
-3. execute command: `composer install` (if update required this)
-4. execute command: `php artisan migrate`
+CURIOS is a video mashup generator for YouTube videos. 
 
-## Laravel PHP Framework
+You can create slugs which are metadata pointers to segments of existing YouTube videos, with a start time, end time. 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, and caching.
+You can also annotate the video or add a second sound track. 
 
-Laravel aims to make the development process a pleasing one for the developer without sacrificing application functionality. Happy developers make the best code. To this end, we've attempted to combine the very best of what we have seen in other web frameworks, including frameworks implemented in other languages, such as Ruby on Rails, ASP.NET MVC, and Sinatra.
+The slug code that is generated can be inserted into HTML source code in a wide variety of applications such as WordPress, Moodle, OpenLabyrinth, OLab4. 
 
-Laravel is accessible, yet powerful, providing powerful tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+The original YouTube video is not altered at all. While we suggest that you ask the owner of the original YouTube video for permission to link to their video in this way, but in most regions, this is not required and is not a breach of copyright. The original YouTube video must permit embedding for this mashup service to work. 
 
-## Official Documentation
-
-Documentation for the entire framework can be found on the [Laravel website](http://laravel.com/docs).
-
-### Contributing To Laravel
-
-**All issues and pull requests should be filed on the [laravel/framework](http://github.com/laravel/framework) repository.**
-
-### License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+For more information on how to use this service, see https://openlabyrinth.ca/curios-video-mashups-user-guide/
